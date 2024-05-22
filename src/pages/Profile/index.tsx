@@ -1,6 +1,6 @@
 import Logo from "../../assets/argentBankLogo.png"
 
-function User() {
+function Profile() {
   return (
     <>
     <nav className="main-nav">
@@ -64,4 +64,4 @@ function User() {
   )
 }
 
-export default User
+export default Profile

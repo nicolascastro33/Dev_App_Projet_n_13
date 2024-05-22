@@ -3,7 +3,6 @@ import IconSecurity from "../../assets/icon-security.png"
 import IconMoney from "../../assets/icon-money.png"
 import IconChat from "../../assets/icon-chat.png"
 
-
 function Home() {
   return (
     <>
