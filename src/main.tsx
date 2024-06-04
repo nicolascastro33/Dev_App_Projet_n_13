@@ -2,35 +2,29 @@ import './index.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
 
 import { createStore } from './lib/create-store'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Profile from './pages/Profile'
-import Footer from './components/Footer'
+
 import { FakeAuthGateway } from './lib/auth/infra/fake-auth.gateway'
 import { FakeUserGateway } from './lib/user/infra/fake-user.gateway'
+import { mockData } from './Mock/data'
+import { Provider } from './Provider'
+import { createRouter } from './router'
+
+const authGateway = new FakeAuthGateway()
+authGateway.authUser = 'Tony'
+const userGateway = new FakeUserGateway()
+userGateway.userInfoByUser.set(authGateway.authUser, mockData)
 
 const store = createStore({
-  authGateway: FakeAuthGateway.withAuthenticatedUser('Tony'),
-  userGateway: FakeUserGateway.withUsersInfos(
-    new Map([['Tony', { email: 't@t', firstName: 'Tony', lastName: 'Stark' }]])
-  ),
+  authGateway,
+  userGateway,
 })
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const router = createRouter({ store })
+
+ReactDOM.createRoot(document.getElementById('root')! as HTMLElement).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-        <Footer />
-      </Router>
-    </Provider>
+    <Provider store={store} router={router} />
   </React.StrictMode>
 )

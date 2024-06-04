@@ -200,6 +200,7 @@ body {
 .input-wrapper input {
   padding: 5px;
   font-size: 1.2rem;
+  border: 2px solid black;
 }
 
 .footer {
@@ -288,4 +289,11 @@ body {
   .transaction-button {
     width: 200px;
   }
+}
+
+/* Adding css in the project */
+/* In the login page */
+.error-password-or-email {
+  font-weight: bold;
+  color: red;
 }

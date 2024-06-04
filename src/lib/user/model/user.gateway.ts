@@ -1,7 +1,19 @@
 export type UserInfos = {
-  firstName: string
-  lastName: string
-  email: string
+  user: string
+  id: string
+  profileInfo:{
+    firstName:string
+    lastName:string
+    email:string
+    password:string
+  }
+  accounts: {
+    id: string
+    name: string
+    amount: string
+    currency: string
+    balance:string
+  }[]
 }
 
 export type GetInfoProfileResponse = {
@@ -9,7 +21,7 @@ export type GetInfoProfileResponse = {
 }
 
 export interface UserGateway {
-  getInfoProfileUser({
+  getUserInfo({
     userId,
   }: {
     userId: string

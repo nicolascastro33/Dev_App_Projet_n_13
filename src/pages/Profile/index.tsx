@@ -1,66 +1,87 @@
-import Logo from "../../assets/argentBankLogo.png"
+import { MouseEvent, useState, ReactNode, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../lib/create-store'
+import {
+  ProfileViewModelType,
+  selectProfileViewModel,
+} from './profile.viewmodel'
+import { Text } from '@chakra-ui/react'
+import { BankAccounts } from '../../components/BankAccount'
+import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
+import WelcomeProfile from '../../components/WelcomeProfile'
 
 function Profile() {
+  const [profileInfo, setProfileInfo] = useState({firstName:"", lastName:""})
+
+  const viewModel = useSelector<
+    RootState,
+    ReturnType<typeof selectProfileViewModel>
+  >((rootState) => selectProfileViewModel(rootState))
+
+  useEffect(() => {
+    const type = viewModel.user.type
+    if (
+      type === ProfileViewModelType.EmptyProfile ||
+      type === ProfileViewModelType.WithAccounts
+    ) {
+      const newData = viewModel.user.profileInfo
+      if(newData)setProfileInfo(newData)
+    }
+  }, [])
+
+  const bankAccountNode: ReactNode = (() => {
+    switch (viewModel.user?.type) {
+      case ProfileViewModelType.NoProfile:
+        return null
+      case ProfileViewModelType.EmptyProfile:
+        return <Text>{viewModel.user.accountInfo}</Text>
+      case ProfileViewModelType.WithAccounts:
+        return <BankAccounts accounts={viewModel.user.accountInfo} />
+      default:
+        return exhaustiveGuard(viewModel.user)
+    }
+  })()
+
+  const [editingName, setEditingName] = useState(false)
+  const userProfile = {
+    firstName: 'Tony',
+    lastName: 'Stark',
+  }
+
+  function editName(e: MouseEvent<HTMLButtonElement>): void {
+    e.preventDefault()
+    if (!editingName) setEditingName(true)
+  }
+
+  function changeName(e: any): void {
+    e.preventDefault()
+    if (e.nativeEvent.submitter.name === 'changeName') {
+      const firstName =
+        e.target.firstName.value.length === 0
+          ? userProfile.firstName
+          : e.target.firstName.value
+      const lastName =
+        e.target.lastName.value.length === 0
+          ? userProfile.lastName
+          : e.target.lastName.value
+      console.log(firstName + ' ' + lastName)
+    }
+    setEditingName(false)
+  }
   return (
-    <>
-    <nav className="main-nav">
-      <a className="main-nav-logo" href="./index.html">
-        <img
-          className="main-nav-logo-image"
-          src={Logo}
-          alt="Argent Bank Logo"
-        />
-        <h1 className="sr-only">Argent Bank</h1>
-      </a>
-      <div>
-        <a className="main-nav-item" href="./user.html">
-          <i className="fa fa-user-circle" />
-          Tony
-        </a>
-        <a className="main-nav-item" href="./index.html">
-          <i className="fa fa-sign-out" />
-          Sign Out
-        </a>
-      </div>
-    </nav>
     <main className="main bg-dark">
-      <div className="header">
-        <h1>Welcome back<br />Tony Jarvis!</h1>
-        <button className="edit-button">Edit Name</button>
-      </div>
+      {profileInfo && (
+        <WelcomeProfile
+          userProfile={profileInfo}
+          editName={editName}
+          changeName={changeName}
+          editingName={editingName}
+        />
+      )}
+
       <h2 className="sr-only">Accounts</h2>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Checking (x8349)</h3>
-          <p className="account-amount">$2,082.79</p>
-          <p className="account-amount-description">Available Balance</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">View transactions</button>
-        </div>
-      </section>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Savings (x6712)</h3>
-          <p className="account-amount">$10,928.42</p>
-          <p className="account-amount-description">Available Balance</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">View transactions</button>
-        </div>
-      </section>
-      <section className="account">
-        <div className="account-content-wrapper">
-          <h3 className="account-title">Argent Bank Credit Card (x8349)</h3>
-          <p className="account-amount">$184.30</p>
-          <p className="account-amount-description">Current Balance</p>
-        </div>
-        <div className="account-content-wrapper cta">
-          <button className="transaction-button">View transactions</button>
-        </div>
-      </section>
+      {bankAccountNode}
     </main>
-    </>
   )
 }
 

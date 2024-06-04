@@ -12,12 +12,13 @@ export class FakeUserGateway implements UserGateway {
     return userGateway
   }
 
-  async getInfoProfileUser({
+  async getUserInfo({
     userId,
   }: {
     userId: string
   }): Promise<GetInfoProfileResponse> {
     const userInfo = this.userInfoByUser.get(userId)
+
     if (!userInfo) {
       return Promise.reject()
     }
