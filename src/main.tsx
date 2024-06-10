@@ -13,7 +13,7 @@ import { createRouter } from './router'
 
 const authGateway = new FakeAuthGateway()
 authGateway.authUser = 'Tony'
-const userGateway = new FakeUserGateway()
+const userGateway = new FakeUserGateway(1000)
 userGateway.userInfoByUser.set(authGateway.authUser, mockData)
 
 const store = createStore({

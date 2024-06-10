@@ -1,3 +1,3 @@
 export interface AuthGateway {
-  getAuthUser(): string
+  getAuthUser(): string;
 }

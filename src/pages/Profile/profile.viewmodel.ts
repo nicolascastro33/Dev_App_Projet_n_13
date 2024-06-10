@@ -1,9 +1,13 @@
 import { RootState } from '../../lib/create-store'
 import { selectAccounts } from '../../lib/user/slices/bank.accounts.slice'
-import { selectUserInfo } from '../../lib/user/slices/profile.slice'
+import {
+  selectIsUserProfileLoading,
+  selectUserInfo,
+} from '../../lib/user/slices/profile.slice'
 
 export enum ProfileViewModelType {
   NoProfile = 'NO_PROFILE',
+  LoadingAccount = 'LOADING_ACCOUNT',
   EmptyProfile = 'EMPTY_PROFILE',
   WithAccounts = 'PROFILE_WITH_ACCOUNTS',
 }
@@ -14,6 +18,10 @@ export const selectProfileViewModel = (
   user:
     | {
         type: ProfileViewModelType.NoProfile
+      }
+    | {
+        type: ProfileViewModelType.LoadingAccount
+        accountInfo: string
       }
     | {
         type: ProfileViewModelType.EmptyProfile
@@ -39,6 +47,16 @@ export const selectProfileViewModel = (
       }
 } => {
   const profile = selectUserInfo('tony-user-id', rootState)
+  const isUserProfileLoading = selectIsUserProfileLoading('Tony', rootState)
+
+  if (isUserProfileLoading) {
+    return {
+      user: {
+        type: ProfileViewModelType.LoadingAccount,
+        accountInfo: 'Loading...',
+      },
+    }
+  }
 
   if (!profile) {
     return {
@@ -55,7 +73,7 @@ export const selectProfileViewModel = (
         accountInfo: 'There is no account yet ',
         profileInfo: {
           firstName: profile.profileInfo.firstName,
-          lastName:profile.profileInfo.lastName,
+          lastName: profile.profileInfo.lastName,
         },
       },
     }
@@ -75,9 +93,9 @@ export const selectProfileViewModel = (
     user: {
       type: ProfileViewModelType.WithAccounts,
       accountInfo,
-      profileInfo:{
-        firstName:profile.profileInfo.firstName,
-        lastName:profile.profileInfo.lastName,
+      profileInfo: {
+        firstName: profile.profileInfo.firstName,
+        lastName: profile.profileInfo.lastName,
       },
     },
   }

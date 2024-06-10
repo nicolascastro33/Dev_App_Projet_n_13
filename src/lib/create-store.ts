@@ -1,7 +1,7 @@
 import { AnyAction, ThunkDispatch, configureStore } from '@reduxjs/toolkit'
 import { AuthGateway } from './auth/model/auth.gateway'
 import { UserGateway } from './user/model/user.gateway'
-import { reducer as userReducer } from './user/reducer'
+import { rootReducer } from './root-reducer'
 import { FakeAuthGateway } from './auth/infra/fake-auth.gateway'
 import { FakeUserGateway } from './user/infra/fake-user.gateway'
 
@@ -10,11 +10,9 @@ export type Dependencies = {
   userGateway: UserGateway
 }
 
-const rootReducer = userReducer
-
 export const createStore = (
   dependencies: Dependencies,
-  preloadedState?: Partial<ReturnType<typeof rootReducer>>
+  preloadedState?: Partial<RootState>
 ) =>
   configureStore({
     reducer: rootReducer,

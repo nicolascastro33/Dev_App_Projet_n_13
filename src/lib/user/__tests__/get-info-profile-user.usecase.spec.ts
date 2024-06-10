@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { getInfoProfileUser } from '../usecases/get-info-profile-user'
 import { FakeUserGateway } from '../infra/fake-user.gateway'
 import { FakeAuthGateway } from '../../auth/infra/fake-auth.gateway'
-import { createStore } from '../../create-store'
-import { selectUserInfo } from '../slices/profile.slice'
-import { selectAccount } from '../slices/bank.accounts.slice'
+import { AppStore, createStore } from '../../create-store'
+import { selectIsUserProfileLoading } from '../slices/profile.slice'
 import { mockData } from '../../../Mock/data'
+import { stateBuilder } from '../../state-builder'
 
 describe("Feature: Retrieving authenticated user's profile info", () => {
   it('Example: Tony is authenticated and can see see his profile info', async () => {
@@ -13,20 +13,23 @@ describe("Feature: Retrieving authenticated user's profile info", () => {
     givenAuthenticatedUserIs('Tony')
     givenExistingUserInfo(mockData)
     // act (when)
-    await whenRetrievingAuthenticatedUserProfileInfo()
+    const userProfileInfoRetrieving =
+      whenRetrievingAuthenticatedUserProfileInfo()
     // assert (then)
+    thenTheProfileOfTheUserShouldBeLoading('Tony')
+    await userProfileInfoRetrieving
     thenTheReceivedProfileShouldBe(mockData)
   })
 })
+
 const authGateway = new FakeAuthGateway()
 const userGateway = new FakeUserGateway()
-const store = createStore({
-  authGateway,
-  userGateway,
-})
+let testStateBuilder = stateBuilder()
+let store: AppStore
 
 function givenAuthenticatedUserIs(user: string) {
   authGateway.authUser = user
+  testStateBuilder = testStateBuilder.withAuthUser({ authUser: user })
 }
 
 function givenExistingUserInfo(userInfo: {
@@ -46,11 +49,26 @@ function givenExistingUserInfo(userInfo: {
     balance: string
   }[]
 }) {
-  userGateway.userInfoByUser.set('Tony', userInfo)
+  userGateway.userInfoByUser.set(userInfo.user, userInfo)
 }
 
 async function whenRetrievingAuthenticatedUserProfileInfo() {
+  store = createStore(
+    {
+      userGateway,
+      authGateway,
+    },
+    testStateBuilder.build()
+  )
   await store.dispatch(getInfoProfileUser())
+}
+
+function thenTheProfileOfTheUserShouldBeLoading(user: string) {
+  const isUserProfileLoading = selectIsUserProfileLoading(
+    user,
+    store.getState()
+  )
+  expect(isUserProfileLoading).toBe(true)
 }
 
 function thenTheReceivedProfileShouldBe(expectedProfileInfo: {
@@ -70,21 +88,20 @@ function thenTheReceivedProfileShouldBe(expectedProfileInfo: {
     balance: string
   }[]
 }) {
-  const authUserProfile = selectUserInfo(
-    expectedProfileInfo.id,
-    store.getState()
-  )
-  expect(authUserProfile).toEqual({
-    id: expectedProfileInfo.id,
-    user: expectedProfileInfo.user,
-    profileInfo: {
-      firstName: expectedProfileInfo.profileInfo.firstName,
-      lastName: expectedProfileInfo.profileInfo.lastName,
-    },
-    accounts: expectedProfileInfo.accounts.map((m) => m.id),
-  })
+  const expectedState = stateBuilder()
+    .withAuthUser({ authUser: expectedProfileInfo.user })
+    .withUser({
+      id: expectedProfileInfo.id,
+      user: expectedProfileInfo.user,
+      accounts: expectedProfileInfo.accounts.map((m) => m.id),
+      profileInfo: {
+        firstName: expectedProfileInfo.profileInfo.firstName,
+        lastName: expectedProfileInfo.profileInfo.lastName,
+      },
+    })
+    .withAccounts(expectedProfileInfo.accounts)
+    .withNotLoadingUserOf({ user: expectedProfileInfo.user })
+    .build()
 
-  expectedProfileInfo.accounts.forEach((account) => {
-    expect(selectAccount(account.id, store.getState())).toEqual(account)
-  })
+  expect(store.getState()).toEqual(expectedState)
 }

@@ -14,6 +14,6 @@ export const bankAccountSlice = createSlice({
   },
 })
 
-export const selectAccount = (id: string, state: RootState) => bankAccountAdapter.getSelectors().selectById(state.bankAccount, id)
+export const selectAccount = (id: string, state: RootState) => bankAccountAdapter.getSelectors().selectById(state.user.bankAccount, id)
 
 export const selectAccounts = (ids: string[], state:RootState) => ids.map((id) => selectAccount(id, state)).filter(Boolean)
