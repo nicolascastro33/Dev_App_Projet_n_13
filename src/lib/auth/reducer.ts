@@ -47,3 +47,4 @@ export const selectAuthUserId = (rootState: RootState) =>
 
 export const selectAuthUserToken = (rootState: RootState) =>
   rootState.auth.authUserToken ?? ''
+

@@ -40,7 +40,6 @@ export class FakeUserGateway implements UserGateway {
   }): Promise<GetInfoProfileResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        console.log(token)
         const userInfo = this.userInfoByUser.get(token)
         if (!userInfo) {
           return reject()

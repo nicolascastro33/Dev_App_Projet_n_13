@@ -75,7 +75,6 @@ function thenTheProfileOfTheUserShouldBeLoading(user: string) {
     user,
     store.getState()
   )
-  console.log(isUserProfileLoading)
   expect(isUserProfileLoading).toBe(true)
 }
 

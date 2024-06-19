@@ -1,7 +1,7 @@
 import { MouseEvent, useState, ReactNode } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
-import { ProfileViewModelType, selectProfileViewModel } from './home.viewmodel'
+import { HomeViewModelType, selectHomeViewModel } from './home.viewmodel'
 import { Text } from '@chakra-ui/react'
 import { BankAccounts } from '../../components/BankAccount'
 import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
@@ -16,21 +16,21 @@ function Home() {
 
   const viewModel = useSelector<
     RootState,
-    ReturnType<typeof selectProfileViewModel>
-  >((rootState) => selectProfileViewModel(rootState))
+    ReturnType<typeof selectHomeViewModel>
+  >((rootState) => selectHomeViewModel(rootState))
 
   const bankAccountNode: ReactNode = (() => {
     switch (viewModel.user?.type) {
-      case ProfileViewModelType.NoProfile:
+      case HomeViewModelType.NoProfile:
         return null
-      case ProfileViewModelType.LoadingAccount:
+      case HomeViewModelType.LoadingAccount:
         return (
           <div className='loader-wrapper'>
             <Loader />
           </div>
         )
 
-      case ProfileViewModelType.EmptyProfile:
+      case HomeViewModelType.EmptyProfile:
         return (
           <>
             <WelcomeProfile
@@ -42,7 +42,7 @@ function Home() {
             <Text>{viewModel.user.accountInfo}</Text>
           </>
         )
-      case ProfileViewModelType.WithAccounts:
+      case HomeViewModelType.WithAccounts:
         return (
           <>
             <WelcomeProfile
@@ -64,6 +64,7 @@ function Home() {
     e.preventDefault()
     if (!editingName) setEditingName(true)
   }
+
   function changeName(e: any): void {
     e.preventDefault()
     if (e.nativeEvent.submitter.name === 'changeName') {

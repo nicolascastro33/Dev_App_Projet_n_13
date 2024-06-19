@@ -11,7 +11,6 @@ function Login() {
 
   const authWithApi = (e: any): void => {
     e.preventDefault()
-    console.log(e.target.rememberMe.checked)
     setAuthenticating(true)
     dispatch(
       authenticateWithApi({

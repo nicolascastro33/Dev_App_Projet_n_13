@@ -6,7 +6,10 @@ import {
 import { User, userAdapter } from '../model/user.entity'
 import { RootState } from '../../create-store'
 import { mockData } from '../../../Mock/data'
-import { getAuthUserProfilePendingDuringUpdate, updateInfoProfile } from '../usecases/update-info-profile-user'
+import {
+  getAuthUserProfilePendingDuringUpdate,
+  updateInfoProfile,
+} from '../usecases/update-info-profile-user'
 
 export type ProfileSliceState = EntityState<User> & {
   loadingProfileByUser: { [userId: string]: boolean }
@@ -84,3 +87,4 @@ export const selectProfileForUser = (userId: string, state: RootState) =>
     .getSelectors()
     .selectAll(state.user.profile)
     .find((t) => t.id === userId)
+

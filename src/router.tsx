@@ -14,8 +14,8 @@ export const createRouter = ({ store }: { store: AppStore }) =>
       element: <LayoutComponent />,
       children: [
         {
-          element: <Welcome/>,
-          path:'*',
+          element: <Welcome />,
+          path: '*',
         },
         {
           element: <Welcome />,

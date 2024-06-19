@@ -1,14 +1,16 @@
 import { createTestStore } from '../../../lib/create-store'
 import { describe, test, expect } from 'vitest'
 import {
-  ProfileViewModel,
-  ProfileViewModelType,
-  selectProfileViewModel,
+  HomeViewModel,
+  HomeViewModelType,
+  selectHomeViewModel,
 } from '../home.viewmodel'
 import { stateBuilder } from '../../../lib/state-builder'
 import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
 import { FakeUserGateway } from '../../../lib/user/infra/fake-user.gateway'
 import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
+import { getAuthInfoProfileUser } from '../../../lib/user/usecases/get-auth-info-profile-user'
+import { mockData } from '../../../Mock/data'
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
   authUser: 'Tony',
@@ -18,10 +20,10 @@ const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
 describe('Profile view model', () => {
   test('Example: there is no profile info in the store', () => {
     const store = createTestStore()
-    const profileViewModel = selectProfileViewModel(store.getState())
-    expect(profileViewModel).toEqual({
+    const HomeViewModel = selectHomeViewModel(store.getState())
+    expect(HomeViewModel).toEqual({
       user: {
-        type: ProfileViewModelType.NoProfile,
+        type: HomeViewModelType.NoProfile,
       },
     })
   })
@@ -30,17 +32,16 @@ describe('Profile view model', () => {
       .withUser({
         id: 'tony-user-id',
         accounts: [],
-        userAuthToken: 'Tony',
         firstName: 'tony',
         lastName: 'stark',
       })
       .build()
     const store = createTestStore({}, initialState)
-    const profileViewModel = selectProfileViewModel(store.getState())
+    const HomeViewModel = selectHomeViewModel(store.getState())
 
-    expect(profileViewModel).toEqual({
+    expect(HomeViewModel).toEqual({
       user: {
-        type: ProfileViewModelType.EmptyProfile,
+        type: HomeViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
         firstName: 'tony',
         lastName: 'stark',
@@ -53,10 +54,10 @@ describe('Profile view model', () => {
       .withLoadingUserOf({ userId: 'tony-user-id' })
       .build()
     const store = createTestStore({}, initialState)
-    const profileViewModel = selectProfileViewModel(store.getState())
-    expect(profileViewModel).toEqual({
+    const HomeViewModel = selectHomeViewModel(store.getState())
+    expect(HomeViewModel).toEqual({
       user: {
-        type: ProfileViewModelType.LoadingAccount,
+        type: HomeViewModelType.LoadingAccount,
         accountInfo: 'Loading...',
       },
     })
@@ -66,7 +67,6 @@ describe('Profile view model', () => {
     const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
-        userAuthToken: 'Tony',
         firstName: 'tony',
         lastName: 'stark',
         accounts: ['act-1'],
@@ -82,10 +82,10 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const profileViewModel = selectProfileViewModel(store.getState())
-    expect(profileViewModel).toEqual({
+    const HomeViewModel = selectHomeViewModel(store.getState())
+    expect(HomeViewModel).toEqual({
       user: {
-        type: ProfileViewModelType.WithAccounts,
+        type: HomeViewModelType.WithAccounts,
         accountInfo: [
           {
             id: 'act-1',
@@ -106,7 +106,6 @@ describe('Profile view model', () => {
     const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
-        userAuthToken: 'Tony',
         firstName: 'tony',
         lastName: 'stark',
         accounts: ['act-1', 'act-2'],
@@ -129,10 +128,10 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const profileViewModel = selectProfileViewModel(store.getState())
-    expect(profileViewModel).toEqual({
+    const HomeViewModel = selectHomeViewModel(store.getState())
+    expect(HomeViewModel).toEqual({
       user: {
-        type: ProfileViewModelType.WithAccounts,
+        type: HomeViewModelType.WithAccounts,
         accountInfo: [
           {
             id: 'act-1',
@@ -158,11 +157,10 @@ describe('Profile view model', () => {
   test('Should have user profile infos when user log in', async () => {
     const token = '1234'
     const userGateway = new FakeUserGateway()
-    userGateway.userInfoByUser.set('1', {
+    userGateway.userInfoByUser.set('1234', {
       id: '1',
       firstName: 'Tony',
       lastName: 'Stark',
-      userAuthToken: token,
     })
 
     const authGateway = new FakeAuthGateway()
@@ -175,17 +173,20 @@ describe('Profile view model', () => {
     })
 
     await store.dispatch(
-      authenticateWithApi({ email: 'test@email', password: '123' })
+      authenticateWithApi({
+        email: 'test@email',
+        password: '123',
+        rememberMe: true,
+      })
     )
-
-    console.log(store.getState())
-    const viewModel = selectProfileViewModel(store.getState())
-    expect(viewModel).toEqual<ProfileViewModel>({
+    await store.dispatch(getAuthInfoProfileUser())
+    const viewModel = selectHomeViewModel(store.getState())
+    expect(viewModel).toEqual<HomeViewModel>({
       user: {
-        type: ProfileViewModelType.EmptyProfile,
+        type: HomeViewModelType.WithAccounts,
         firstName: 'Tony',
         lastName: 'Stark',
-        accountInfo: 'There is no account yet ',
+        accountInfo: mockData.accounts,
       },
     })
   })

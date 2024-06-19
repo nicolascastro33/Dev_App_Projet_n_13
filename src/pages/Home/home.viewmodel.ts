@@ -6,30 +6,30 @@ import {
   selectProfileForUser,
 } from '../../lib/user/slices/profile.slice'
 
-export enum ProfileViewModelType {
+export enum HomeViewModelType {
   NoProfile = 'NO_PROFILE',
   LoadingAccount = 'LOADING_ACCOUNT',
   EmptyProfile = 'EMPTY_PROFILE',
   WithAccounts = 'PROFILE_WITH_ACCOUNTS',
 }
 
-export type ProfileViewModel = {
+export type HomeViewModel = {
   user:
     | {
-        type: ProfileViewModelType.NoProfile
+        type: HomeViewModelType.NoProfile
       }
     | {
-        type: ProfileViewModelType.LoadingAccount
+        type: HomeViewModelType.LoadingAccount
         accountInfo: string
       }
     | {
-        type: ProfileViewModelType.EmptyProfile
+        type: HomeViewModelType.EmptyProfile
         accountInfo: string
         firstName: string
         lastName: string
       }
     | {
-        type: ProfileViewModelType.WithAccounts
+        type: HomeViewModelType.WithAccounts
         accountInfo: {
           id: string
           name: string
@@ -42,9 +42,9 @@ export type ProfileViewModel = {
       }
 }
 
-export const selectProfileViewModel = (
+export const selectHomeViewModel = (
   rootState: RootState
-): ProfileViewModel => {
+): HomeViewModel => {
   const authUser = selectAuthUserId(rootState)
   const profile = selectProfileForUser(authUser, rootState)
   const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
@@ -52,7 +52,7 @@ export const selectProfileViewModel = (
   if (isUserProfileLoading) {
     return {
       user: {
-        type: ProfileViewModelType.LoadingAccount,
+        type: HomeViewModelType.LoadingAccount,
         accountInfo: 'Loading...',
       },
     }
@@ -61,7 +61,7 @@ export const selectProfileViewModel = (
   if (!profile) {
     return {
       user: {
-        type: ProfileViewModelType.NoProfile,
+        type: HomeViewModelType.NoProfile,
       },
     }
   }
@@ -69,7 +69,7 @@ export const selectProfileViewModel = (
   if (profile.accounts.length === 0) {
     return {
       user: {
-        type: ProfileViewModelType.EmptyProfile,
+        type: HomeViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -89,7 +89,7 @@ export const selectProfileViewModel = (
 
   return {
     user: {
-      type: ProfileViewModelType.WithAccounts,
+      type: HomeViewModelType.WithAccounts,
       accountInfo,
       firstName: profile.firstName,
       lastName: profile.lastName,
