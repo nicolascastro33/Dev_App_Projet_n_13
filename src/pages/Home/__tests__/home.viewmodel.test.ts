@@ -1,10 +1,19 @@
 import { createTestStore } from '../../../lib/create-store'
 import { describe, test, expect } from 'vitest'
 import {
+  ProfileViewModel,
   ProfileViewModelType,
   selectProfileViewModel,
-} from '../profile.viewmodel'
+} from '../home.viewmodel'
 import { stateBuilder } from '../../../lib/state-builder'
+import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
+import { FakeUserGateway } from '../../../lib/user/infra/fake-user.gateway'
+import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
+
+const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
+  authUser: 'Tony',
+  userId: 'tony-user-id',
+})
 
 describe('Profile view model', () => {
   test('Example: there is no profile info in the store', () => {
@@ -17,34 +26,31 @@ describe('Profile view model', () => {
     })
   })
   test('Example: there is no account in the profile', () => {
-    const initialState = stateBuilder()
+    const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
         accounts: [],
-        user: 'Tony',
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+        userAuthToken: 'Tony',
+        firstName: 'tony',
+        lastName: 'stark',
       })
       .build()
     const store = createTestStore({}, initialState)
     const profileViewModel = selectProfileViewModel(store.getState())
+
     expect(profileViewModel).toEqual({
       user: {
         type: ProfileViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+        firstName: 'tony',
+        lastName: 'stark',
       },
     })
   })
 
   test('Example: the user account is loading ', () => {
-    const initialState = stateBuilder()
-      .withLoadingUserOf({ user: 'Tony' })
+    const initialState = stateBuilderWithTonyAuthenticated
+      .withLoadingUserOf({ userId: 'tony-user-id' })
       .build()
     const store = createTestStore({}, initialState)
     const profileViewModel = selectProfileViewModel(store.getState())
@@ -57,14 +63,12 @@ describe('Profile view model', () => {
   })
 
   test('Example: there is one account in the profile', () => {
-    const initialState = stateBuilder()
+    const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
-        user: 'tony',
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+        userAuthToken: 'Tony',
+        firstName: 'tony',
+        lastName: 'stark',
         accounts: ['act-1'],
       })
       .withAccounts([
@@ -91,23 +95,20 @@ describe('Profile view model', () => {
             currency: 'euro',
           },
         ],
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+
+        firstName: 'tony',
+        lastName: 'stark',
       },
     })
   })
 
   test('Example: there is few accounts in the bank profile', () => {
-    const initialState = stateBuilder()
+    const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
-        user: 'tony',
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+        userAuthToken: 'Tony',
+        firstName: 'tony',
+        lastName: 'stark',
         accounts: ['act-1', 'act-2'],
       })
       .withAccounts([
@@ -148,10 +149,43 @@ describe('Profile view model', () => {
             currency: 'dollar',
           },
         ],
-        profileInfo: {
-          firstName: 'tony',
-          lastName: 'stark',
-        },
+        firstName: 'tony',
+        lastName: 'stark',
+      },
+    })
+  })
+
+  test('Should have user profile infos when user log in', async () => {
+    const token = '1234'
+    const userGateway = new FakeUserGateway()
+    userGateway.userInfoByUser.set('1', {
+      id: '1',
+      firstName: 'Tony',
+      lastName: 'Stark',
+      userAuthToken: token,
+    })
+
+    const authGateway = new FakeAuthGateway()
+    authGateway.token = token
+    authGateway.userId = '1'
+
+    const store = createTestStore({
+      userGateway,
+      authGateway,
+    })
+
+    await store.dispatch(
+      authenticateWithApi({ email: 'test@email', password: '123' })
+    )
+
+    console.log(store.getState())
+    const viewModel = selectProfileViewModel(store.getState())
+    expect(viewModel).toEqual<ProfileViewModel>({
+      user: {
+        type: ProfileViewModelType.EmptyProfile,
+        firstName: 'Tony',
+        lastName: 'Stark',
+        accountInfo: 'There is no account yet ',
       },
     })
   })

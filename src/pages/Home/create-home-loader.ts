@@ -1,10 +1,10 @@
 import { AppStore } from '../../lib/create-store'
 import { LoaderFunction } from 'react-router-dom'
-import { getInfoProfileUser } from '../../lib/user/usecases/get-info-profile-user'
+import { getAuthInfoProfileUser } from '../../lib/user/usecases/get-auth-info-profile-user'
 
-export const createProfileLoader =
+export const createHomeLoader =
   ({ store }: { store: AppStore }): LoaderFunction =>
   () => {
-    store.dispatch(getInfoProfileUser())
+    store.dispatch(getAuthInfoProfileUser())
     return null
   }

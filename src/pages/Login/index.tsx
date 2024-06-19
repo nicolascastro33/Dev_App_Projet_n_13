@@ -1,24 +1,42 @@
 import { useState } from 'react'
 import LoginView from './view'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '../../lib/create-store'
+import { authenticateWithApi } from '../../lib/auth/usecases/authenticate-with-api.usecase'
 
 function Login() {
   const [wrongPasswordOrEmail, setWrongPasswordOrEmail] = useState(false)
-  const navigate = useNavigate()
-  function loginSubmit(e: any): void {
+  const [authenticating, setAuthenticating] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+
+  const authWithApi = (e: any): void => {
     e.preventDefault()
-    if (e.target.password.value === '123' && e.target.username.value === 'tony@stark.com') {
-      setWrongPasswordOrEmail(false)
-      navigate("/profile")
-    } else {
-      setWrongPasswordOrEmail(true)
-    }
+    console.log(e.target.rememberMe.checked)
+    setAuthenticating(true)
+    dispatch(
+      authenticateWithApi({
+        email: e.target.username.value,
+        password: e.target.password.value,
+        rememberMe: e.target.rememberMe.checked
+      })
+    )
+      .unwrap()
+      .finally(() => {
+        setAuthenticating(false)
+        const token = localStorage.getItem('token')
+        if (token) {
+          setWrongPasswordOrEmail(false)
+        } else {
+          setWrongPasswordOrEmail(true)
+        }
+      })
   }
 
   return (
     <LoginView
-      loginSubmit={loginSubmit}
+      loginSubmit={authWithApi}
       wrongPasswordOrEmail={wrongPasswordOrEmail}
+      authenticating={authenticating}
     />
   )
 }

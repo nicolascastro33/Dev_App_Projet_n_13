@@ -1,7 +1,10 @@
+import { Link } from 'react-router-dom'
+
 export const BankAccounts = ({
   accounts,
 }: {
   accounts: {
+    id: string
     name: string
     currency: string
     amount: string
@@ -24,7 +27,9 @@ export const BankAccounts = ({
             </p>
           </div>
           <div className="account-content-wrapper cta">
-            <button className="transaction-button">View transactions</button>
+            <Link className="transaction-button" to={`/account/${account.id}`}>
+              View transactions
+            </Link>
           </div>
         </section>
       ))}

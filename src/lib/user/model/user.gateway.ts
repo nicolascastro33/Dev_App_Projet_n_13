@@ -1,19 +1,7 @@
 export type UserInfos = {
-  user: string
   id: string
-  profileInfo:{
-    firstName:string
-    lastName:string
-    email:string
-    password:string
-  }
-  accounts: {
-    id: string
-    name: string
-    amount: string
-    currency: string
-    balance:string
-  }[]
+  firstName: string
+  lastName: string
 }
 
 export type GetInfoProfileResponse = {
@@ -21,9 +9,21 @@ export type GetInfoProfileResponse = {
 }
 
 export interface UserGateway {
-  getUserInfo({
+  getUserInfo({ token }: { token: string }): Promise<GetInfoProfileResponse>
+  updateInfoProfile({
+    token,
+    firstName,
+    lastName,
     userId,
   }: {
+    token: string
+    firstName: string
+    lastName: string
     userId: string
-  }): Promise<GetInfoProfileResponse>
+  }): Promise<{
+    firstName: string
+    lastName: string
+    token: string
+    userId: string
+  }>
 }

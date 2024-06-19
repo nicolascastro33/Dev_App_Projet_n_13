@@ -5,21 +5,27 @@ import ReactDOM from 'react-dom/client'
 
 import { createStore } from './lib/create-store'
 
-import { FakeAuthGateway } from './lib/auth/infra/fake-auth.gateway'
-import { FakeUserGateway } from './lib/user/infra/fake-user.gateway'
-import { mockData } from './Mock/data'
 import { Provider } from './Provider'
 import { createRouter } from './router'
 
-const authGateway = new FakeAuthGateway()
-authGateway.authUser = 'Tony'
-const userGateway = new FakeUserGateway(1000)
-userGateway.userInfoByUser.set(authGateway.authUser, mockData)
+import { ApiAuthGateway } from './lib/auth/infra/api-auth.gateway'
+import { ApiUserGateway } from './lib/user/infra/api-user.gateway'
+import { userAuthenticated } from './lib/auth/reducer'
+
+const authGateway = new ApiAuthGateway()
+const userGateway = new ApiUserGateway()
 
 const store = createStore({
   authGateway,
   userGateway,
 })
+
+const authUserToken = localStorage.getItem('token')
+const userId = localStorage.getItem('userId')
+if (authUserToken && userId) {
+  authGateway.token = authUserToken
+  store.dispatch(userAuthenticated({ authUserToken, userId }))
+}
 
 const router = createRouter({ store })
 

@@ -1,26 +1,46 @@
-import { useEffect, useState,MouseEvent } from 'react'
-import HeaderView from './view'
+import { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
+import { useSelector } from 'react-redux'
+import { selectIsUserAuthenticated } from '../../lib/auth/reducer'
+import { HeaderViewAuthenticated, HeaderViewNotAuthenticated } from './view'
+import { useDispatch } from 'react-redux'
+import { AppDispatch, RootState } from '../../lib/create-store'
+import { authenticatedUserLogOut } from '../../lib/auth/usecases/authenticatedUserLogOut'
+import {
+  ProfileViewModelType,
+  selectProfileViewModel,
+} from '../../pages/Home/home.viewmodel'
 
 function Header() {
-  const [isItProfilePage, setProfilePage] = useState(false)
-  const location = useLocation().pathname
+  const isUserAuthenticated = useSelector(selectIsUserAuthenticated)
   const navigate = useNavigate()
+  const location = useLocation().pathname
+  const dispatch = useDispatch<AppDispatch>()
 
-  function signOut(e:MouseEvent<HTMLAnchorElement> ):void {
+  const viewModel = useSelector<
+    RootState,
+    ReturnType<typeof selectProfileViewModel>
+  >((rootState) => selectProfileViewModel(rootState))
+
+  function signOut(e: MouseEvent<HTMLAnchorElement>): void {
     e.preventDefault()
-    navigate('/')
-  }
-
-  useEffect(() => {
-    if (location === '/profile') {
-      setProfilePage(true)
-    } else {
-      setProfilePage(false)
+    dispatch(authenticatedUserLogOut())
+    if (location !== '/') {
+      navigate('/login')
     }
-  }, [location])
-
-  return <HeaderView signOut={signOut} isItProfilePage={isItProfilePage} firstName="Tony" />
+  }
+  if (
+    isUserAuthenticated &&
+    viewModel.user.type !== ProfileViewModelType.NoProfile &&
+    viewModel.user.type !== ProfileViewModelType.LoadingAccount
+  ) {
+    return (
+      <HeaderViewAuthenticated
+        signOut={signOut}
+        firstName={viewModel.user.firstName}
+      />
+    )
+  }
+  return <HeaderViewNotAuthenticated />
 }
 export default Header

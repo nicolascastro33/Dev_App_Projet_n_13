@@ -17,11 +17,12 @@ function WelcomeProfile({
   editingName,
 }: WelcomeProfileProps) {
   return (
-      <div className="header">
-        {editingName ? (
-          <>
-            <h1>Welcome back</h1>
-            <form onSubmit={changeName} className='editingNameForm'>
+    <div className="header">
+      {editingName ? (
+        <>
+          <h1>Welcome back</h1>
+          <form onSubmit={changeName} className="editingNameForm">
+            <div className="editing-name-input-wrapper">
               <div className="input-wrapper-change">
                 <input
                   type="text"
@@ -36,27 +37,40 @@ function WelcomeProfile({
                   placeholder={userProfile?.lastName}
                 />
               </div>
-              <button type="submit" name='changeName'  className="edit-button save-new-name-button">
+            </div>
+            <div className="button-wrapper">
+              <button
+                type="submit"
+                name="changeName"
+                className="edit-button save-new-name-button"
+              >
                 Save
               </button>
-              <button type="submit" name='cancelChange'  className="edit-button cancel-change-name">
+              <button
+                type="submit"
+                name="cancelChange"
+                className="edit-button cancel-change-name"
+              >
                 Cancel
               </button>
-            </form>
-          </>
-        ) : (
-          <>
-            <h1>
-              Welcome back
-              <br />
-              {userProfile?.firstName} {userProfile?.lastName}
-            </h1>
+            </div>
+          </form>
+        </>
+      ) : (
+        <>
+          <h1>
+            Welcome back
+            <br />
+            {userProfile?.firstName} {userProfile?.lastName}
+          </h1>
+          <div className="button-wrapper">
             <button onClick={editName} className="edit-button">
               Edit Name
             </button>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
+    </div>
   )
 }
 export default WelcomeProfile

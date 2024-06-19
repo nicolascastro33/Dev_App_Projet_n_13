@@ -1,8 +1,9 @@
+import { selectAuthUserId } from '../../lib/auth/reducer'
 import { RootState } from '../../lib/create-store'
 import { selectAccounts } from '../../lib/user/slices/bank.accounts.slice'
 import {
   selectIsUserProfileLoading,
-  selectUserInfo,
+  selectProfileForUser,
 } from '../../lib/user/slices/profile.slice'
 
 export enum ProfileViewModelType {
@@ -12,9 +13,7 @@ export enum ProfileViewModelType {
   WithAccounts = 'PROFILE_WITH_ACCOUNTS',
 }
 
-export const selectProfileViewModel = (
-  rootState: RootState
-): {
+export type ProfileViewModel = {
   user:
     | {
         type: ProfileViewModelType.NoProfile
@@ -26,10 +25,8 @@ export const selectProfileViewModel = (
     | {
         type: ProfileViewModelType.EmptyProfile
         accountInfo: string
-        profileInfo: {
-          firstName: string
-          lastName: string
-        }
+        firstName: string
+        lastName: string
       }
     | {
         type: ProfileViewModelType.WithAccounts
@@ -40,14 +37,17 @@ export const selectProfileViewModel = (
           amount: string
           currency: string
         }[]
-        profileInfo: {
-          firstName: string
-          lastName: string
-        }
+        firstName: string
+        lastName: string
       }
-} => {
-  const profile = selectUserInfo('tony-user-id', rootState)
-  const isUserProfileLoading = selectIsUserProfileLoading('Tony', rootState)
+}
+
+export const selectProfileViewModel = (
+  rootState: RootState
+): ProfileViewModel => {
+  const authUser = selectAuthUserId(rootState)
+  const profile = selectProfileForUser(authUser, rootState)
+  const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
 
   if (isUserProfileLoading) {
     return {
@@ -71,10 +71,8 @@ export const selectProfileViewModel = (
       user: {
         type: ProfileViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
-        profileInfo: {
-          firstName: profile.profileInfo.firstName,
-          lastName: profile.profileInfo.lastName,
-        },
+        firstName: profile.firstName,
+        lastName: profile.lastName,
       },
     }
   }
@@ -93,10 +91,8 @@ export const selectProfileViewModel = (
     user: {
       type: ProfileViewModelType.WithAccounts,
       accountInfo,
-      profileInfo: {
-        firstName: profile.profileInfo.firstName,
-        lastName: profile.profileInfo.lastName,
-      },
+      firstName: profile.firstName,
+      lastName: profile.lastName,
     },
   }
 }

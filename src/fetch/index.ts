@@ -1,4 +1,10 @@
-export async function getToken() {
+export async function getToken({
+  email,
+  password,
+}: {
+  email: string
+  password: string
+}): Promise<string | undefined> {
   try {
     const response = await fetch('http://localhost:3001/api/v1/user/login', {
       method: 'POST',
@@ -6,14 +12,15 @@ export async function getToken() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: 'tony@stark.com',
-        password: 'password123',
+        email,
+        password,
       }),
     })
-    const token = await response.json().then((res) => res.body.token)
+    const token: string = await response.json().then((res) => res.body.token)
     return token
   } catch (err) {
     console.log(err)
+    return undefined
   }
 }
 
@@ -30,16 +37,21 @@ export async function getInfo(token: string) {
     return infoProfile
   } catch (err) {
     console.log(err)
+    return undefined
   }
 }
 
-interface updateInfoProps{
-    firstName:string,
-    lastName:string,
+interface updateInfoProps {
+  token: string
+  firstName: string
+  lastName: string
 }
 
-
-export async function updateInfo(token: string, {firstName, lastName}:updateInfoProps) {
+export async function updateInfo({
+  token,
+  firstName,
+  lastName,
+}: updateInfoProps) {
   try {
     const response = await fetch('http://localhost:3001/api/v1/user/profile', {
       method: 'PUT',
@@ -51,11 +63,11 @@ export async function updateInfo(token: string, {firstName, lastName}:updateInfo
         firstName,
         lastName,
       }),
-
     })
     const newInfoProfile = await response.json().then((res) => res.body)
     return newInfoProfile
   } catch (err) {
     console.log(err)
+    return undefined
   }
 }

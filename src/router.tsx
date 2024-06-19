@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { createProfileLoader } from './pages/Profile/create-profile-loader'
+import { createHomeLoader } from './pages/Home/create-home-loader'
 import { AppStore } from './lib/create-store'
+import Welcome from './pages/Welcome'
 import LayoutComponent from './pages/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import Profile from './pages/Profile'
+import { TransactionLayout } from './pages/Account/account.layout'
 
 export const createRouter = ({ store }: { store: AppStore }) =>
   createBrowserRouter([
@@ -13,29 +14,26 @@ export const createRouter = ({ store }: { store: AppStore }) =>
       element: <LayoutComponent />,
       children: [
         {
-          index: true,
-          element: <Home />,
+          element: <Welcome/>,
+          path:'*',
         },
-      ],
-    },
-    {
-      path: '/login',
-      element: <LayoutComponent />,
-      children: [
         {
-          index: true,
+          element: <Welcome />,
+          path: '',
+        },
+        {
           element: <Login />,
+          path: 'login',
         },
-      ],
-    },
-    {
-      path: '/profile',
-      element:<LayoutComponent/>,
-      children: [
         {
+          element: <Home />,
           index: true,
-          loader: createProfileLoader({ store }),
-          element: <Profile />,
+          path: 'home',
+          loader: createHomeLoader({ store }),
+        },
+        {
+          element: <TransactionLayout />,
+          path: 'account/:accountId',
         },
       ],
     },

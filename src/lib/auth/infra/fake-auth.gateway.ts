@@ -1,16 +1,40 @@
-import { AuthGateway } from '../model/auth.gateway'
+import { AuthGateway, AuthUser } from '../model/auth.gateway'
+import { AuthApiPromiseGateway } from '../model/auth.gateway'
 
 export class FakeAuthGateway implements AuthGateway {
-  authUser!: string
+  token!:string
+  userId!:string
 
-  // static withAuthenticatedUser(authUser: string): FakeAuthGateway {
-  //   const gateway = new FakeAuthGateway()
-  //   gateway.authUser = authUser
-  //   return gateway
-  // }
+  onAuthStateChangedListener: (authUser: AuthUser) => void = () => {
+    return
+  }
 
-  getAuthUser(): string {
-    return this.authUser
+  constructor(private readonly delay = 0) {}
+
+  onAuthStateChanged(listener: (authUser: string | undefined) => void): void {
+    this.onAuthStateChangedListener = listener
+  }
+
+  authenticateWithApi({
+    email,
+    password,
+  }: {
+    email: string
+    password: string
+  }): Promise<AuthApiPromiseGateway> {
+    console.log(email, password)
+    return new Promise((resolve) =>
+      setTimeout(
+        () => resolve({ token: this.token, userId:this.userId }),
+        this.delay
+      )
+    )
+  }
+
+  authenticatedUserLogOut(): void {}
+
+  simulateAuthStateChanged(authUser: string) {
+    this.onAuthStateChangedListener(authUser)
   }
 }
 

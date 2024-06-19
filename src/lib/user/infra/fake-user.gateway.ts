@@ -14,14 +14,34 @@ export class FakeUserGateway implements UserGateway {
     return userGateway
   }
 
-  async getUserInfo({
+  async updateInfoProfile({
+    token,
+    firstName,
+    lastName,
     userId,
   }: {
+    token: string
+    firstName: string
+    lastName: string
     userId: string
+  }): Promise<{
+    firstName: string
+    lastName: string
+    token: string
+    userId: string
+  }> {
+    return { firstName, lastName, userId, token }
+  }
+
+  async getUserInfo({
+    token,
+  }: {
+    token: string
   }): Promise<GetInfoProfileResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        const userInfo = this.userInfoByUser.get(userId)
+        console.log(token)
+        const userInfo = this.userInfoByUser.get(token)
         if (!userInfo) {
           return reject()
         }
