@@ -1,40 +1,26 @@
-import { MouseEvent, ReactNode } from 'react'
+import { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { selectIsUserAuthenticated } from '../../lib/auth/reducer'
 import { HeaderViewAuthenticated, HeaderViewNotAuthenticated } from './view'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
 import { authenticatedUserLogOut } from '../../lib/auth/usecases/authenticatedUserLogOut'
-import { HeaderViewModelType, selectHeaderViewModel } from './header.viewmodel'
-import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
+import {
+  ViewModelType,
+  selectViewModel,
+} from '../../viewModel/viewmodel'
 
 function Header() {
+  const isUserAuthenticated = useSelector(selectIsUserAuthenticated)
   const navigate = useNavigate()
   const location = useLocation().pathname
   const dispatch = useDispatch<AppDispatch>()
 
   const viewModel = useSelector<
     RootState,
-    ReturnType<typeof selectHeaderViewModel>
-  >((rootState) => selectHeaderViewModel(rootState))
-  console.log(viewModel.user.type)
-
-  const headerNode: ReactNode = (() => {
-    switch (viewModel.user?.type) {
-      case HeaderViewModelType.UserNotConnected:
-        return <HeaderViewNotAuthenticated />
-      case HeaderViewModelType.UserConnected:
-        return (
-          <HeaderViewAuthenticated
-            signOut={signOut}
-            firstName={viewModel.user.firstName}
-          />
-        )
-      default:
-        return exhaustiveGuard(viewModel.user)
-    }
-  })()
-
+    ReturnType<typeof selectViewModel>
+  >((rootState) => selectViewModel(rootState))
 
   function signOut(e: MouseEvent<HTMLAnchorElement>): void {
     e.preventDefault()
@@ -43,7 +29,18 @@ function Header() {
       navigate('/login')
     }
   }
-
-  return <header>{ headerNode }</header>
+  if (
+    isUserAuthenticated &&
+    viewModel.user.type !== ViewModelType.NoProfile &&
+    viewModel.user.type !== ViewModelType.LoadingAccount
+  ) {
+    return (
+      <HeaderViewAuthenticated
+        signOut={signOut}
+        firstName={viewModel.user.firstName}
+      />
+    )
+  }
+  return <HeaderViewNotAuthenticated />
 }
 export default Header

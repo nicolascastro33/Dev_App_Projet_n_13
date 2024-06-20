@@ -29,7 +29,6 @@ export const profileSlice = createSlice({
           loading: true,
         })
       })
-
       .addCase(getAuthUserProfilePendingDuringUpdate, (state, action) => {
         setUserProfileInfoLoadingState(state, {
           userId: action.payload?.userId,
@@ -87,4 +86,3 @@ export const selectProfileForUser = (userId: string, state: RootState) =>
     .getSelectors()
     .selectAll(state.user.profile)
     .find((t) => t.id === userId)
-

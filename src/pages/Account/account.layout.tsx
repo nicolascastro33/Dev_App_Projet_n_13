@@ -1,3 +1,5 @@
+import { Transaction } from '../../components/Transaction'
+
 const mockData = {
   id: 'cnt-1',
   name: 'Argent Bank Checking (x8349)',
@@ -25,63 +27,31 @@ const mockData = {
       date: 'June 13th, 2020',
       description: 'Payment from John Doe',
     },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
   ],
 }
 
-export const TransactionLayout = () => {
+export const AccountLayout = () => {
   return (
-    <main>
-      <section className="transaction-name">
-        <h1>{mockData.name}</h1>
-        <h2>
+    <main className="account-page-main">
+      <section className="account-details-page">
+        <h1 className="account-name">{mockData.name}</h1>
+        <h2 className="account-amount">
           {mockData.currency}
           {mockData.amount}
         </h2>
-        <h3>{mockData.balance} Balance</h3>
+        <h3 className="account-balance">{mockData.balance} Balance</h3>
       </section>
-      <section>
+      <section className="all-transactions-wrapper">
         <h2 className="sr-only">transactions</h2>
         {mockData.transactions.map((transaction, index) => (
-          <article key={index} className="transaction">
-            <img src="/" alt="arrow" />
-            <p>{transaction.date}</p>
-            <p>{transaction.description}</p>
-            <p>
-              {mockData.currency}
-              {5}
-            </p>
-            <p>
-              {mockData.currency}
-              {index === 0
-                ? mockData.amount
-                : Number(mockData.amount.replace(',', '')) - 5 * index}
-            </p>
-          </article>
+          <Transaction
+            transaction={transaction}
+            amount={mockData.amount}
+            currency={mockData.currency}
+            index={index}
+            key={index}
+          />
         ))}
-        <div>
-          <h3>Transaction Type: Electronic</h3>
-          <div>
-            <h3>Category: Food</h3>
-
-            <img src="/" alt="pencil" />
-          </div>
-          <div>
-            <h3>Notes:</h3>
-            <img src="/" alt="pencil" />
-          </div>
-        </div>
       </section>
     </main>
   )

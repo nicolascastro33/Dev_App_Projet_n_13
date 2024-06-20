@@ -1,35 +1,35 @@
-import { selectAuthUserId } from '../../lib/auth/reducer'
-import { RootState } from '../../lib/create-store'
-import { selectAccounts } from '../../lib/user/slices/bank.accounts.slice'
+import { selectAuthUserId } from '../lib/auth/reducer'
+import { RootState } from '../lib/create-store'
+import { selectAccounts } from '../lib/user/slices/bank.accounts.slice'
 import {
   selectIsUserProfileLoading,
   selectProfileForUser,
-} from '../../lib/user/slices/profile.slice'
+} from '../lib/user/slices/profile.slice'
 
-export enum HomeViewModelType {
+export enum ViewModelType {
   NoProfile = 'NO_PROFILE',
   LoadingAccount = 'LOADING_ACCOUNT',
   EmptyProfile = 'EMPTY_PROFILE',
   WithAccounts = 'PROFILE_WITH_ACCOUNTS',
 }
 
-export type HomeViewModel = {
+export type ViewModel = {
   user:
     | {
-        type: HomeViewModelType.NoProfile
+        type: ViewModelType.NoProfile
       }
     | {
-        type: HomeViewModelType.LoadingAccount
+        type: ViewModelType.LoadingAccount
         accountInfo: string
       }
     | {
-        type: HomeViewModelType.EmptyProfile
+        type: ViewModelType.EmptyProfile
         accountInfo: string
         firstName: string
         lastName: string
       }
     | {
-        type: HomeViewModelType.WithAccounts
+        type: ViewModelType.WithAccounts
         accountInfo: {
           id: string
           name: string
@@ -42,9 +42,7 @@ export type HomeViewModel = {
       }
 }
 
-export const selectHomeViewModel = (
-  rootState: RootState
-): HomeViewModel => {
+export const selectViewModel = (rootState: RootState): ViewModel => {
   const authUser = selectAuthUserId(rootState)
   const profile = selectProfileForUser(authUser, rootState)
   const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
@@ -52,7 +50,7 @@ export const selectHomeViewModel = (
   if (isUserProfileLoading) {
     return {
       user: {
-        type: HomeViewModelType.LoadingAccount,
+        type: ViewModelType.LoadingAccount,
         accountInfo: 'Loading...',
       },
     }
@@ -61,7 +59,7 @@ export const selectHomeViewModel = (
   if (!profile) {
     return {
       user: {
-        type: HomeViewModelType.NoProfile,
+        type: ViewModelType.NoProfile,
       },
     }
   }
@@ -69,7 +67,7 @@ export const selectHomeViewModel = (
   if (profile.accounts.length === 0) {
     return {
       user: {
-        type: HomeViewModelType.EmptyProfile,
+        type: ViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -89,7 +87,7 @@ export const selectHomeViewModel = (
 
   return {
     user: {
-      type: HomeViewModelType.WithAccounts,
+      type: ViewModelType.WithAccounts,
       accountInfo,
       firstName: profile.firstName,
       lastName: profile.lastName,

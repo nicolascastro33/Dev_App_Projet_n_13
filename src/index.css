@@ -327,12 +327,12 @@ body {
   }
 }
 
-.button-wrapper{
+.button-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:20px;
-  & button{
+  gap: 20px;
+  & button {
     height: 30px;
     display: flex;
     justify-content: center;
@@ -341,4 +341,71 @@ body {
   }
 }
 
+.account-page-main {
+  background-color: rgb(223, 223, 224);
+  padding-bottom: 50px
+}
 
+.account-details-page {
+  width: 100%;
+  border: 2px solid rgb(224, 223, 223);
+  background-color: white;
+  margin-bottom: 100px;
+  padding: 25px 0 25px 0;
+}
+
+.all-transactions-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 0 5% 0 5%;
+}
+
+.transaction {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid rgb(224, 223, 223);
+
+  & div {
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 3fr 3fr;
+    padding: 20px;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+.transaction-arrow {
+  width: 20px;
+  transform: rotate(180deg);
+}
+
+.transaction-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin: 5px 0 5px 20px;
+}
+
+
+.transaction-details-category {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  & img {
+    width: 20px;
+  }
+}
+
+.transaction-details-note {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  & img {
+    width: 20px;
+  }
+}

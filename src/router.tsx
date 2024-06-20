@@ -5,7 +5,7 @@ import Welcome from './pages/Welcome'
 import LayoutComponent from './pages/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import { TransactionLayout } from './pages/Account/account.layout'
+import { AccountLayout } from './pages/Account/account.layout'
 
 export const createRouter = ({ store }: { store: AppStore }) =>
   createBrowserRouter([
@@ -32,7 +32,7 @@ export const createRouter = ({ store }: { store: AppStore }) =>
           loader: createHomeLoader({ store }),
         },
         {
-          element: <TransactionLayout />,
+          element: <AccountLayout />,
           path: 'account/:accountId',
         },
       ],

@@ -1,7 +1,10 @@
 import { MouseEvent, useState, ReactNode } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
-import { HomeViewModelType, selectHomeViewModel } from './home.viewmodel'
+import {
+  ViewModelType,
+  selectViewModel,
+} from '../../viewModel/viewmodel'
 import { Text } from '@chakra-ui/react'
 import { BankAccounts } from '../../components/BankAccount'
 import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
@@ -9,28 +12,27 @@ import WelcomeProfile from '../../components/WelcomeProfile'
 import { updateInfoProfile } from '../../lib/user/usecases/update-info-profile-user'
 import { Loader } from '../../utils/loader'
 
-
 function Home() {
   const [editingName, setEditingName] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
   const viewModel = useSelector<
     RootState,
-    ReturnType<typeof selectHomeViewModel>
-  >((rootState) => selectHomeViewModel(rootState))
+    ReturnType<typeof selectViewModel>
+  >((rootState) => selectViewModel(rootState))
 
   const bankAccountNode: ReactNode = (() => {
     switch (viewModel.user?.type) {
-      case HomeViewModelType.NoProfile:
+      case ViewModelType.NoProfile:
         return null
-      case HomeViewModelType.LoadingAccount:
+      case ViewModelType.LoadingAccount:
         return (
-          <div className='loader-wrapper'>
+          <div className="loader-wrapper">
             <Loader />
           </div>
         )
 
-      case HomeViewModelType.EmptyProfile:
+      case ViewModelType.EmptyProfile:
         return (
           <>
             <WelcomeProfile
@@ -42,7 +44,7 @@ function Home() {
             <Text>{viewModel.user.accountInfo}</Text>
           </>
         )
-      case HomeViewModelType.WithAccounts:
+      case ViewModelType.WithAccounts:
         return (
           <>
             <WelcomeProfile

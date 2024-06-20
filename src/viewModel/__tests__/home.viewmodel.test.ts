@@ -1,16 +1,16 @@
-import { createTestStore } from '../../../lib/create-store'
+import { createTestStore } from '../../lib/create-store'
 import { describe, test, expect } from 'vitest'
 import {
-  HomeViewModel,
-  HomeViewModelType,
-  selectHomeViewModel,
-} from '../home.viewmodel'
-import { stateBuilder } from '../../../lib/state-builder'
-import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
-import { FakeUserGateway } from '../../../lib/user/infra/fake-user.gateway'
-import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
-import { getAuthInfoProfileUser } from '../../../lib/user/usecases/get-auth-info-profile-user'
-import { mockData } from '../../../Mock/data'
+  ViewModel,
+  ViewModelType,
+  selectViewModel,
+} from '../viewmodel'
+import { stateBuilder } from '../../lib/state-builder'
+import { FakeAuthGateway } from '../../lib/auth/infra/fake-auth.gateway'
+import { FakeUserGateway } from '../../lib/user/infra/fake-user.gateway'
+import { authenticateWithApi } from '../../lib/auth/usecases/authenticate-with-api.usecase'
+import { getAuthInfoProfileUser } from '../../lib/user/usecases/get-auth-info-profile-user'
+import { mockData } from '../../Mock/data'
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
   authUser: 'Tony',
@@ -20,10 +20,10 @@ const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
 describe('Profile view model', () => {
   test('Example: there is no profile info in the store', () => {
     const store = createTestStore()
-    const HomeViewModel = selectHomeViewModel(store.getState())
-    expect(HomeViewModel).toEqual({
+    const ViewModel = selectViewModel(store.getState())
+    expect(ViewModel).toEqual({
       user: {
-        type: HomeViewModelType.NoProfile,
+        type: ViewModelType.NoProfile,
       },
     })
   })
@@ -37,11 +37,11 @@ describe('Profile view model', () => {
       })
       .build()
     const store = createTestStore({}, initialState)
-    const HomeViewModel = selectHomeViewModel(store.getState())
+    const ViewModel = selectViewModel(store.getState())
 
-    expect(HomeViewModel).toEqual({
+    expect(ViewModel).toEqual({
       user: {
-        type: HomeViewModelType.EmptyProfile,
+        type: ViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
         firstName: 'tony',
         lastName: 'stark',
@@ -54,10 +54,10 @@ describe('Profile view model', () => {
       .withLoadingUserOf({ userId: 'tony-user-id' })
       .build()
     const store = createTestStore({}, initialState)
-    const HomeViewModel = selectHomeViewModel(store.getState())
-    expect(HomeViewModel).toEqual({
+    const ViewModel = selectViewModel(store.getState())
+    expect(ViewModel).toEqual({
       user: {
-        type: HomeViewModelType.LoadingAccount,
+        type: ViewModelType.LoadingAccount,
         accountInfo: 'Loading...',
       },
     })
@@ -82,10 +82,10 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const HomeViewModel = selectHomeViewModel(store.getState())
-    expect(HomeViewModel).toEqual({
+    const ViewModel = selectViewModel(store.getState())
+    expect(ViewModel).toEqual({
       user: {
-        type: HomeViewModelType.WithAccounts,
+        type: ViewModelType.WithAccounts,
         accountInfo: [
           {
             id: 'act-1',
@@ -128,10 +128,10 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const HomeViewModel = selectHomeViewModel(store.getState())
-    expect(HomeViewModel).toEqual({
+    const ViewModel = selectViewModel(store.getState())
+    expect(ViewModel).toEqual({
       user: {
-        type: HomeViewModelType.WithAccounts,
+        type: ViewModelType.WithAccounts,
         accountInfo: [
           {
             id: 'act-1',
@@ -180,10 +180,10 @@ describe('Profile view model', () => {
       })
     )
     await store.dispatch(getAuthInfoProfileUser())
-    const viewModel = selectHomeViewModel(store.getState())
-    expect(viewModel).toEqual<HomeViewModel>({
+    const viewModel = selectViewModel(store.getState())
+    expect(viewModel).toEqual<ViewModel>({
       user: {
-        type: HomeViewModelType.WithAccounts,
+        type: ViewModelType.WithAccounts,
         firstName: 'Tony',
         lastName: 'Stark',
         accountInfo: mockData.accounts,
