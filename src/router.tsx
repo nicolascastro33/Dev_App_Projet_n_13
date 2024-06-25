@@ -5,7 +5,8 @@ import Welcome from './pages/Welcome'
 import LayoutComponent from './pages/Layout'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import { AccountLayout } from './pages/Account/account.layout'
+import { createAccountLoader } from './pages/Account/create-account-loader'
+import AccountLayout from './pages/Account/account.layout'
 
 export const createRouter = ({ store }: { store: AppStore }) =>
   createBrowserRouter([
@@ -14,7 +15,7 @@ export const createRouter = ({ store }: { store: AppStore }) =>
       element: <LayoutComponent />,
       children: [
         {
-          element: <Welcome />,
+          element: <Login />,
           path: '*',
         },
         {
@@ -33,7 +34,9 @@ export const createRouter = ({ store }: { store: AppStore }) =>
         },
         {
           element: <AccountLayout />,
-          path: 'account/:accountId',
+          index:true,
+          path: 'account/:id',
+          loader: createAccountLoader({ store }),
         },
       ],
     },

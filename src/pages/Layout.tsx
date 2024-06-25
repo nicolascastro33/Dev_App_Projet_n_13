@@ -11,9 +11,12 @@ function LayoutComponent() {
   const navigate = useNavigate()
   const location = useLocation().pathname
   useEffect(() => {
-    if (location === '/home' && !isUserAuthenticated) {
-      navigate('/login')
+    if (!isUserAuthenticated) {
+      if (location !== '/login' && location !== '/') {
+        navigate('/login')
+      }
     }
+
     if (location === '/login' && isUserAuthenticated) {
       navigate('/home')
     }

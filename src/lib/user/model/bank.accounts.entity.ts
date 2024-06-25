@@ -6,6 +6,5 @@ export type bankAccounts = {
   amount: string
   currency: string
   balance: string
-
 }
 export const bankAccountAdapter = createEntityAdapter<bankAccounts>()

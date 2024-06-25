@@ -1,58 +1,66 @@
+import { useSelector } from 'react-redux'
 import { Transaction } from '../../components/Transaction'
+import { RootState } from '../../lib/create-store'
+import { ViewModelType, selectAccountViewModel } from './account-viewmodel'
+import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
+import { ReactNode } from 'react'
+import { Loading } from '../../components/Loading'
+import { BankAccountInfo } from '../../components/BankAccountInfoAccountPage'
 
-const mockData = {
-  id: 'cnt-1',
-  name: 'Argent Bank Checking (x8349)',
-  amount: '2,082.79',
-  currency: '$',
-  balance: 'Available',
-  transactions: [
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-    {
-      date: 'June 13th, 2020',
-      description: 'Payment from John Doe',
-    },
-  ],
+function AccountLayout() {
+  const viewModel = useSelector<
+    RootState,
+    ReturnType<typeof selectAccountViewModel>
+  >((rootState) => selectAccountViewModel(rootState))
+  console.log(viewModel.account.type)
+
+  const bankAccountNode: ReactNode = (() => {
+    switch (viewModel.account?.type) {
+      case ViewModelType.NoAccount:
+        return null
+      case ViewModelType.LoadingAccount:
+        return <Loading />
+      case ViewModelType.NoTransactions:
+        return (
+          <>
+            {' '}
+            <BankAccountInfo
+              name={viewModel.account.accountInfo.name}
+              currency={viewModel.account.accountInfo.currency}
+              amount={viewModel.account.accountInfo.amount}
+              balance={viewModel.account.accountInfo.balance}
+            />
+            <h2>{viewModel.account.transactions} </h2>
+          </>
+        )
+      case ViewModelType.WithTransactions:
+        return (
+          <>
+            <BankAccountInfo
+              name={viewModel.account.accountInfo.name}
+              currency={viewModel.account.accountInfo.currency}
+              amount={viewModel.account.accountInfo.amount}
+              balance={viewModel.account.accountInfo.balance}
+            />
+            <section className="all-transactions-wrapper">
+              {viewModel.account.transactions.map((transaction, index) => (
+                <Transaction
+                  transaction={transaction}
+                  amount={viewModel.account.accountInfo.amount}
+                  currency={viewModel.account.accountInfo.currency}
+                  index={index}
+                  key={index}
+                />
+              ))}
+            </section>
+          </>
+        )
+      default:
+        return exhaustiveGuard(viewModel.account)
+    }
+  })()
+
+  return <main className="account-page-main">{bankAccountNode}</main>
 }
 
-export const AccountLayout = () => {
-  return (
-    <main className="account-page-main">
-      <section className="account-details-page">
-        <h1 className="account-name">{mockData.name}</h1>
-        <h2 className="account-amount">
-          {mockData.currency}
-          {mockData.amount}
-        </h2>
-        <h3 className="account-balance">{mockData.balance} Balance</h3>
-      </section>
-      <section className="all-transactions-wrapper">
-        <h2 className="sr-only">transactions</h2>
-        {mockData.transactions.map((transaction, index) => (
-          <Transaction
-            transaction={transaction}
-            amount={mockData.amount}
-            currency={mockData.currency}
-            index={index}
-            key={index}
-          />
-        ))}
-      </section>
-    </main>
-  )
-}
+export default AccountLayout

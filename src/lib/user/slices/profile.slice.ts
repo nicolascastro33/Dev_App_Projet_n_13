@@ -78,6 +78,9 @@ const setUserProfileInfoLoadingState = (
 export const selectUserInfo = (userId: string, state: RootState) =>
   userAdapter.getSelectors().selectById(state.user.profile, userId)
 
+export const selectUserFirstName = (userId: string, state: RootState) =>
+  userAdapter.getSelectors().selectById(state.user.profile, userId)?.firstName
+
 export const selectIsUserProfileLoading = (userId: string, state: RootState) =>
   state.user.profile.loadingProfileByUser[userId] ?? false
 

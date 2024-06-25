@@ -1,16 +1,12 @@
-import { createTestStore } from '../../lib/create-store'
+import { createTestStore } from '../../../lib/create-store'
 import { describe, test, expect } from 'vitest'
-import {
-  ViewModel,
-  ViewModelType,
-  selectViewModel,
-} from '../viewmodel'
-import { stateBuilder } from '../../lib/state-builder'
-import { FakeAuthGateway } from '../../lib/auth/infra/fake-auth.gateway'
-import { FakeUserGateway } from '../../lib/user/infra/fake-user.gateway'
-import { authenticateWithApi } from '../../lib/auth/usecases/authenticate-with-api.usecase'
-import { getAuthInfoProfileUser } from '../../lib/user/usecases/get-auth-info-profile-user'
-import { mockData } from '../../Mock/data'
+import { ViewModel, ViewModelType, selectHomeViewModel } from '../home-viewmodel'
+import { stateBuilder } from '../../../lib/state-builder'
+import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
+import { FakeUserGateway } from '../../../lib/user/infra/fake-user.gateway'
+import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
+import { getAuthInfoProfileUser } from '../../../lib/user/usecases/get-auth-info-profile-user'
+import { mockData } from '../../../Mock/data'
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
   authUser: 'Tony',
@@ -20,7 +16,7 @@ const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
 describe('Profile view model', () => {
   test('Example: there is no profile info in the store', () => {
     const store = createTestStore()
-    const ViewModel = selectViewModel(store.getState())
+    const ViewModel = selectHomeViewModel(store.getState())
     expect(ViewModel).toEqual({
       user: {
         type: ViewModelType.NoProfile,
@@ -37,7 +33,7 @@ describe('Profile view model', () => {
       })
       .build()
     const store = createTestStore({}, initialState)
-    const ViewModel = selectViewModel(store.getState())
+    const ViewModel = selectHomeViewModel(store.getState())
 
     expect(ViewModel).toEqual({
       user: {
@@ -54,7 +50,7 @@ describe('Profile view model', () => {
       .withLoadingUserOf({ userId: 'tony-user-id' })
       .build()
     const store = createTestStore({}, initialState)
-    const ViewModel = selectViewModel(store.getState())
+    const ViewModel = selectHomeViewModel(store.getState())
     expect(ViewModel).toEqual({
       user: {
         type: ViewModelType.LoadingAccount,
@@ -82,7 +78,7 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const ViewModel = selectViewModel(store.getState())
+    const ViewModel = selectHomeViewModel(store.getState())
     expect(ViewModel).toEqual({
       user: {
         type: ViewModelType.WithAccounts,
@@ -128,7 +124,7 @@ describe('Profile view model', () => {
       ])
       .build()
     const store = createTestStore({}, initialState)
-    const ViewModel = selectViewModel(store.getState())
+    const ViewModel = selectHomeViewModel(store.getState())
     expect(ViewModel).toEqual({
       user: {
         type: ViewModelType.WithAccounts,
@@ -180,7 +176,7 @@ describe('Profile view model', () => {
       })
     )
     await store.dispatch(getAuthInfoProfileUser())
-    const viewModel = selectViewModel(store.getState())
+    const viewModel = selectHomeViewModel(store.getState())
     expect(viewModel).toEqual<ViewModel>({
       user: {
         type: ViewModelType.WithAccounts,

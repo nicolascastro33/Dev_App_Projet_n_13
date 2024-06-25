@@ -2,12 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { getAuthInfoProfileUser } from '../usecases/get-auth-info-profile-user'
 import { FakeUserGateway } from '../infra/fake-user.gateway'
 import { FakeAuthGateway } from '../../auth/infra/fake-auth.gateway'
-import { AppStore, createStore } from '../../create-store'
+import { AppStore, createTestStore } from '../../create-store'
 import { selectIsUserProfileLoading } from '../slices/profile.slice'
 import { mockData } from '../../../Mock/data'
 import { stateBuilder } from '../../state-builder'
-
-
 
 describe("Feature: Retrieving authenticated user's profile info", () => {
   it('Example: Tony is authenticated and can see see his profile info', async () => {
@@ -31,6 +29,7 @@ describe("Feature: Retrieving authenticated user's profile info", () => {
 
 const authGateway = new FakeAuthGateway()
 const userGateway = new FakeUserGateway()
+
 let testStateBuilder = stateBuilder()
 let store: AppStore
 
@@ -56,18 +55,18 @@ function givenExistingUserInfo(userInfo: {
     balance: string
   }[]
 }) {
-  userGateway.userInfoByUser.set("Tony", userInfo)  
+  userGateway.userInfoByUser.set('Tony', userInfo)
 }
 
 async function whenRetrievingAuthenticatedUserProfileInfo() {
-  store = createStore(
+  store = createTestStore(
     {
       userGateway,
       authGateway,
     },
     testStateBuilder.build()
-  ) 
-  await store.dispatch(getAuthInfoProfileUser()) 
+  )
+  await store.dispatch(getAuthInfoProfileUser())
 }
 
 function thenTheProfileOfTheUserShouldBeLoading(user: string) {

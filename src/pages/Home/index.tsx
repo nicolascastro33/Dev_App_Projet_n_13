@@ -1,16 +1,13 @@
 import { MouseEvent, useState, ReactNode } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
-import {
-  ViewModelType,
-  selectViewModel,
-} from '../../viewModel/viewmodel'
+import { ViewModelType, selectHomeViewModel } from './home-viewmodel'
 import { Text } from '@chakra-ui/react'
-import { BankAccounts } from '../../components/BankAccount'
+import { BankAccounts } from '../../components/BankAccountHomePage'
 import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
 import WelcomeProfile from '../../components/WelcomeProfile'
 import { updateInfoProfile } from '../../lib/user/usecases/update-info-profile-user'
-import { Loader } from '../../utils/loader'
+import { Loading } from '../../components/Loading'
 
 function Home() {
   const [editingName, setEditingName] = useState(false)
@@ -18,20 +15,15 @@ function Home() {
 
   const viewModel = useSelector<
     RootState,
-    ReturnType<typeof selectViewModel>
-  >((rootState) => selectViewModel(rootState))
+    ReturnType<typeof selectHomeViewModel>
+  >((rootState) => selectHomeViewModel(rootState))
 
-  const bankAccountNode: ReactNode = (() => {
+  const profileNode: ReactNode = (() => {
     switch (viewModel.user?.type) {
       case ViewModelType.NoProfile:
         return null
       case ViewModelType.LoadingAccount:
-        return (
-          <div className="loader-wrapper">
-            <Loader />
-          </div>
-        )
-
+        return <Loading />
       case ViewModelType.EmptyProfile:
         return (
           <>
@@ -57,6 +49,21 @@ function Home() {
             <BankAccounts accounts={viewModel.user.accountInfo} />
           </>
         )
+      case ViewModelType.UpdateInfoProfile:
+        return (
+          <>
+            <WelcomeProfile
+              userProfile={viewModel.user}
+              editName={editName}
+              changeName={changeName}
+              editingName={editingName}
+            />
+            <h2 className="sr-only">Accounts</h2>
+            <BankAccounts accounts={viewModel.user.accountInfo} />
+            <Loading />
+          </>
+        )
+
       default:
         return exhaustiveGuard(viewModel.user)
     }
@@ -93,7 +100,7 @@ function Home() {
     }
   }
 
-  return <main className="main bg-dark">{bankAccountNode}</main>
+  return <main className="main bg-dark main-home">{profileNode}</main>
 }
 
 export default Home

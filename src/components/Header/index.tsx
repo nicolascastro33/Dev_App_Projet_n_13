@@ -1,26 +1,26 @@
 import { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { selectIsUserAuthenticated } from '../../lib/auth/reducer'
+import {
+  selectAuthUserId,
+  selectIsUserAuthenticated,
+} from '../../lib/auth/reducer'
 import { HeaderViewAuthenticated, HeaderViewNotAuthenticated } from './view'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
 import { authenticatedUserLogOut } from '../../lib/auth/usecases/authenticatedUserLogOut'
-import {
-  ViewModelType,
-  selectViewModel,
-} from '../../viewModel/viewmodel'
+import { selectUserFirstName } from '../../lib/user/slices/profile.slice'
 
 function Header() {
   const isUserAuthenticated = useSelector(selectIsUserAuthenticated)
+  const userId = useSelector(selectAuthUserId)
+  const firstName = useSelector<RootState>((rootState) =>
+    selectUserFirstName(userId, rootState)
+  )
+
   const navigate = useNavigate()
   const location = useLocation().pathname
   const dispatch = useDispatch<AppDispatch>()
-
-  const viewModel = useSelector<
-    RootState,
-    ReturnType<typeof selectViewModel>
-  >((rootState) => selectViewModel(rootState))
 
   function signOut(e: MouseEvent<HTMLAnchorElement>): void {
     e.preventDefault()
@@ -29,17 +29,8 @@ function Header() {
       navigate('/login')
     }
   }
-  if (
-    isUserAuthenticated &&
-    viewModel.user.type !== ViewModelType.NoProfile &&
-    viewModel.user.type !== ViewModelType.LoadingAccount
-  ) {
-    return (
-      <HeaderViewAuthenticated
-        signOut={signOut}
-        firstName={viewModel.user.firstName}
-      />
-    )
+  if (isUserAuthenticated && firstName) {
+    return <HeaderViewAuthenticated signOut={signOut} firstName={`${firstName}`} />
   }
   return <HeaderViewNotAuthenticated />
 }
