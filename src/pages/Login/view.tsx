@@ -1,4 +1,5 @@
-import { Loader } from "../../utils/loader"
+import { Loading } from "../../components/Loading"
+// import { Loader } from "../../utils/loader"
 
 interface LoginViewProps {
   loginSubmit(e: any): void
@@ -35,7 +36,7 @@ function LoginView({
           {wrongPasswordOrEmail && (
             <p className="error-password-or-email">Wrong password or email</p>
           )}
-          {authenticating && <Loader/>}
+          {authenticating && <Loading/>}
         </form>
       </section>
     </main>

@@ -7,7 +7,6 @@ export const createAccountLoader =
   async () => {
     const accountId = window.location.pathname.replace('/account/', '')
     if (!store.getState().account.info.entities[accountId]) {
-      console.log('hello')
       await store.dispatch(getAuthBankAccountInfo({accountId}))
     }
     return null

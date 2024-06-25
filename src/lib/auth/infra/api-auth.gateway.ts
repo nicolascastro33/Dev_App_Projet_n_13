@@ -28,6 +28,9 @@ export class ApiAuthGateway implements AuthGateway {
       if (rememberMe) {
         localStorage.setItem('token', token)
         localStorage.setItem('userId', userId)
+      } else {
+        localStorage.setItem('token', token)
+        localStorage.setItem('userId', userId)
       }
       this.onAuthStateChangedListener(token)
       return { token, userId }

@@ -17,7 +17,7 @@ function AccountLayout() {
   const bankAccountNode: ReactNode = (() => {
     switch (viewModel.account?.type) {
       case ViewModelType.NoAccount:
-        return null
+        return <h1>We didn't find this account, try an another moment</h1>
       case ViewModelType.LoadingAccount:
         return <Loading />
       case ViewModelType.NoTransactions:
