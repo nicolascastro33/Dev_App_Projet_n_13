@@ -4,10 +4,12 @@ import { getAuthBankAccountInfo } from '../../lib/account/usecases/get-auth-acco
 
 export const createAccountLoader =
   ({ store }: { store: AppStore }): LoaderFunction =>
-  async () => {
-    const accountId = window.location.pathname.replace('/account/', '')
-    if (!store.getState().account.info.entities[accountId]) {
-      await store.dispatch(getAuthBankAccountInfo({accountId}))
+  async ({ params }) => {
+    const { id: accountId } = params
+
+    if (accountId && !store.getState().account.info.entities[accountId]) {
+      await store.dispatch(getAuthBankAccountInfo({ accountId }))
     }
+    
     return null
   }

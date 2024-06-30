@@ -41,7 +41,7 @@ export type ViewModel = {
         firstName: string
         lastName: string
       }
-      | {
+    | {
         type: ViewModelType.UpdateInfoProfile
         accountInfo: {
           id: string
@@ -61,7 +61,6 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
   const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
 
   if (isUserProfileLoading) {
-    console.log(profile)
     return {
       user: {
         type: ViewModelType.LoadingAccount,
