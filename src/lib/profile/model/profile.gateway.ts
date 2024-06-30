@@ -1,15 +1,15 @@
-export type UserInfos = {
+export type ProfileInfos = {
   id: string
   firstName: string
   lastName: string
 }
 
 export type GetInfoProfileResponse = {
-  userInfo: UserInfos
+  profileInfo: ProfileInfos
 }
 
-export interface UserGateway {
-  getUserInfo({ token }: { token: string }): Promise<GetInfoProfileResponse>
+export interface ProfileGateway {
+  getProfileInfo({ token }: { token: string }): Promise<GetInfoProfileResponse>
   updateInfoProfile({
     token,
     firstName,

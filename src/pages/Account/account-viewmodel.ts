@@ -1,8 +1,10 @@
+import { useParams } from 'react-router-dom'
 import {
   selectBankAccountInfo,
   selectIsBankAccountInfoLoading,
 } from '../../lib/account/slices/bank-account-info'
 import { RootState } from '../../lib/create-store'
+import { selectAllTransactionsFromOneAccount } from '../../lib/transactions/slices/bank-transactions-info'
 
 
 
@@ -48,10 +50,11 @@ export type ViewModel = {
 }
 
 export const selectAccountViewModel = (rootState: RootState): ViewModel => {
-  const accountId = window.location.pathname.replace('/account/', '')
-  const account = selectBankAccountInfo(accountId, rootState)
+  const {id} = useParams()
+  const account = selectBankAccountInfo(id!, rootState)
+  const transactions = selectAllTransactionsFromOneAccount(id!, rootState)
   const IsBankAccountInfoLoading = selectIsBankAccountInfoLoading(
-    accountId,
+    id!,
     rootState
   )
 
@@ -72,7 +75,7 @@ export const selectAccountViewModel = (rootState: RootState): ViewModel => {
     }
   }
 
-  if (account.transactions.length === 0) {
+  if (!transactions) {
     return {
       account: {
         type: ViewModelType.NoTransactions,
@@ -96,7 +99,7 @@ export const selectAccountViewModel = (rootState: RootState): ViewModel => {
         currency: account.currency,
         balance: account.balance,
       },
-      transactions: account.transactions
+      transactions
     },
   }
 }

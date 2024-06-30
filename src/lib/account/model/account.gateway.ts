@@ -4,14 +4,14 @@ export type AccountInfo = {
   amount: string
   currency: string
   balance: string
-  transactions: {
-    date: string
-    description: string
-  }[]
 }
 
 export type GetInfoAccountResponse = {
   accountInfo: AccountInfo
+}
+
+export type GetInfoAllAccountsResponse = {
+  allAccounts: AccountInfo[]
 }
 
 export interface AccountGateway {
@@ -22,4 +22,5 @@ export interface AccountGateway {
     accountId: string
     token: string
   }): Promise<GetInfoAccountResponse>
+  getAllAccountsInfo({token}:{token:string}):Promise<GetInfoAllAccountsResponse>
 }

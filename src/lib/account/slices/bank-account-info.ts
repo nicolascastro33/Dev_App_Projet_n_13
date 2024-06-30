@@ -5,9 +5,14 @@ import {
   getAuthBankAccountInfo,
   getAuthBankAccountInfoPending,
 } from '../usecases/get-auth-account-info-with-id'
+import {
+  getAuthAllBankAccountInfo,
+  getAuthAllBankAccountInfoPending,
+} from '../usecases/get-auth-all-bank-account-info'
 
 export type AccountSliceState = EntityState<Account> & {
   loadingAccountById: { [accountId: string]: boolean }
+  loadingAllAccounts: boolean
 }
 
 export const accountSlice = createSlice({
@@ -32,10 +37,21 @@ export const accountSlice = createSlice({
           currency: account.currency,
           balance: account.balance,
           amount: account.amount,
-          transactions: account.transactions,
         })
         setBankAccountInfoLoadingState(state, {
           accountId: account.id,
+          loading: false,
+        })
+      })
+      .addCase(getAuthAllBankAccountInfoPending, (state) => {
+        setAllBankAccountInfoLoadingState(state, {
+          loading: true,
+        })
+      })
+      .addCase(getAuthAllBankAccountInfo.fulfilled, (state, action) => {
+        const accounts = action.payload
+        accountAdapter.addMany(state, accounts)
+        setAllBankAccountInfoLoadingState(state, {
           loading: false,
         })
       })
@@ -49,6 +65,13 @@ const setBankAccountInfoLoadingState = (
   state.loadingAccountById[accountId] = loading
 }
 
+const setAllBankAccountInfoLoadingState = (
+  state: AccountSliceState,
+  { loading }: { loading: boolean }
+) => {
+  state.loadingAllAccounts = loading
+}
+
 export const selectBankAccountInfo = (accountId: string, state: RootState) =>
   accountAdapter.getSelectors().selectById(state.account.info, accountId)
 
@@ -56,6 +79,9 @@ export const selectIsBankAccountInfoLoading = (
   accountId: string,
   state: RootState
 ) => state.account.info.loadingAccountById[accountId] ?? false
+
+export const selectAllBankAccount = (state: RootState) =>
+  accountAdapter.getSelectors().selectAll(state.account.info) ?? undefined
 
 export const selectBankAccount = (accountId: string, state: RootState) =>
   accountAdapter

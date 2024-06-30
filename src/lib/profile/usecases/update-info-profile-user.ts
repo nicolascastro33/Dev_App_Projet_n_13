@@ -13,12 +13,12 @@ export const updateInfoProfile = createAppAsyncThunk(
       firstName: string
       lastName: string
     },
-    { extra: { userGateway }, getState, dispatch }
+    { extra: { profileGateway }, getState, dispatch }
   ) => {
     const token = selectAuthUserToken(getState())
     const userId = selectAuthUserId(getState())
     dispatch(getAuthUserProfilePendingDuringUpdate({ userId }))
-    const authUser = await userGateway.updateInfoProfile({
+    const authUser = await profileGateway.updateInfoProfile({
       token,
       userId,
       firstName: params.firstName,

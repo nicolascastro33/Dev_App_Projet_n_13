@@ -1,11 +1,15 @@
 import { createTestStore } from '../../../lib/create-store'
 import { describe, test, expect } from 'vitest'
-import { ViewModel, ViewModelType, selectHomeViewModel } from '../home-viewmodel'
+import {
+  ViewModel,
+  ViewModelType,
+  selectHomeViewModel,
+} from '../home-viewmodel'
 import { stateBuilder } from '../../../lib/state-builder'
 import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
-import { FakeUserGateway } from '../../../lib/user/infra/fake-user.gateway'
+import { FakeProfileGateway } from '../../../lib/profile/infra/fake-profile.gateway'
 import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
-import { getAuthInfoProfileUser } from '../../../lib/user/usecases/get-auth-info-profile-user'
+import { getAuthInfoProfileUser } from '../../../lib/profile/usecases/get-auth-info-profile-user'
 import { mockData } from '../../../Mock/data'
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
@@ -152,8 +156,8 @@ describe('Profile view model', () => {
 
   test('Should have user profile infos when user log in', async () => {
     const token = '1234'
-    const userGateway = new FakeUserGateway()
-    userGateway.userInfoByUser.set('1234', {
+    const profileGateway = new FakeProfileGateway()
+    profileGateway.profileInfoByUser.set('1234', {
       id: '1',
       firstName: 'Tony',
       lastName: 'Stark',
@@ -164,7 +168,7 @@ describe('Profile view model', () => {
     authGateway.userId = '1'
 
     const store = createTestStore({
-      userGateway,
+      profileGateway,
       authGateway,
     })
 

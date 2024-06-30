@@ -6,7 +6,7 @@ import { Text } from '@chakra-ui/react'
 import { BankAccounts } from '../../components/BankAccountHomePage'
 import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
 import WelcomeProfile from '../../components/WelcomeProfile'
-import { updateInfoProfile } from '../../lib/user/usecases/update-info-profile-user'
+import { updateInfoProfile } from '../../lib/profile/usecases/update-info-profile-user'
 import { Loading } from '../../components/Loading'
 
 function Home() {

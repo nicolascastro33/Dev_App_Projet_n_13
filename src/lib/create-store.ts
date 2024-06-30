@@ -5,21 +5,24 @@ import {
   configureStore,
 } from '@reduxjs/toolkit'
 import { AuthGateway } from './auth/model/auth.gateway'
-import { UserGateway } from './user/model/user.gateway'
+import { ProfileGateway } from './profile/model/profile.gateway'
 import { AccountGateway } from './account/model/account.gateway'
 
 import { rootReducer } from './root-reducer'
 
 import { FakeAuthGateway } from './auth/infra/fake-auth.gateway'
-import { FakeUserGateway } from './user/infra/fake-user.gateway'
+import { FakeProfileGateway } from './profile/infra/fake-profile.gateway'
 
 import { onAuthStateChangedListener } from './auth/listeners/on-auth-state-changed.listener'
 import { FakeAccountGateway } from './account/infra/fake-account.gateway'
+import { TransactionsGateway } from './transactions/model/transactions.gateway'
+import { FakeTransactionsGateway } from './transactions/infra/fake-transactions.gateway'
 
 export type Dependencies = {
   authGateway: AuthGateway
-  userGateway: UserGateway
+  profileGateway: ProfileGateway
   accountGateway: AccountGateway
+  transactionsGateway: TransactionsGateway
 }
 
 export const createStore = (
@@ -55,16 +58,18 @@ export const createStore = (
 export const createTestStore = (
   {
     authGateway = new FakeAuthGateway(),
-    userGateway = new FakeUserGateway(),
+    profileGateway = new FakeProfileGateway(),
     accountGateway = new FakeAccountGateway(),
+    transactionsGateway = new FakeTransactionsGateway(),
   }: Partial<Dependencies> = {},
   preloadedState?: Partial<ReturnType<typeof rootReducer>>
 ) =>
   createStore(
     {
       authGateway,
-      userGateway,
+      profileGateway,
       accountGateway,
+      transactionsGateway,
     },
     preloadedState
   )

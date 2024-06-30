@@ -12,7 +12,6 @@ function AccountLayout() {
     RootState,
     ReturnType<typeof selectAccountViewModel>
   >((rootState) => selectAccountViewModel(rootState))
-  console.log(viewModel.account.type)
 
   const bankAccountNode: ReactNode = (() => {
     switch (viewModel.account?.type) {

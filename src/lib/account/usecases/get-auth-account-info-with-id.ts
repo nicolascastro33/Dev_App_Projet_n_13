@@ -4,10 +4,10 @@ import { createAction } from '@reduxjs/toolkit'
 
 export const getAuthBankAccountInfoPending = createAction<{
   accountId: string
-}>('user/getAuthBankAccountInfoPending')
+}>('account/getAuthBankAccountInfoPending')
 
 export const getAuthBankAccountInfo = createAppAsyncThunk(
-  'user/getAuthBankAccountInfo',
+  'account/getAuthBankAccountInfo',
   async (
     params: {
       accountId: string

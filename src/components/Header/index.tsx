@@ -9,7 +9,7 @@ import { HeaderViewAuthenticated, HeaderViewNotAuthenticated } from './view'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
 import { authenticatedUserLogOut } from '../../lib/auth/usecases/authenticatedUserLogOut'
-import { selectUserFirstName } from '../../lib/user/slices/profile.slice'
+import { selectUserFirstName } from '../../lib/profile/slices/profile.slice'
 
 function Header() {
   const isUserAuthenticated = useSelector(selectIsUserAuthenticated)

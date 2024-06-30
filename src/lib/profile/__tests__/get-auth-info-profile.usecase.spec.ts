@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { getAuthInfoProfileUser } from '../usecases/get-auth-info-profile-user'
-import { FakeUserGateway } from '../infra/fake-user.gateway'
+import { FakeProfileGateway } from '../infra/fake-profile.gateway'
 import { FakeAuthGateway } from '../../auth/infra/fake-auth.gateway'
 import { AppStore, createTestStore } from '../../create-store'
 import { selectIsUserProfileLoading } from '../slices/profile.slice'
@@ -28,7 +28,7 @@ describe("Feature: Retrieving authenticated user's profile info", () => {
 })
 
 const authGateway = new FakeAuthGateway()
-const userGateway = new FakeUserGateway()
+const profileGateway = new FakeProfileGateway()
 
 let testStateBuilder = stateBuilder()
 let store: AppStore
@@ -55,13 +55,13 @@ function givenExistingUserInfo(userInfo: {
     balance: string
   }[]
 }) {
-  userGateway.userInfoByUser.set('Tony', userInfo)
+  profileGateway.profileInfoByUser.set('Tony', userInfo)
 }
 
 async function whenRetrievingAuthenticatedUserProfileInfo() {
   store = createTestStore(
     {
-      userGateway,
+      profileGateway,
       authGateway,
     },
     testStateBuilder.build()

@@ -9,12 +9,12 @@ export const getAuthUserProfilePending = createAction<{ userId: string }>(
 
 export const getAuthInfoProfileUser = createAppAsyncThunk(
   'user/getAuthInfoProfileUser',
-  async (_, { extra: { userGateway }, dispatch, getState }) => {
+  async (_, { extra: { profileGateway }, dispatch, getState }) => {
     const token = selectAuthUserToken(getState())
     const userId = selectAuthUserId(getState())
     dispatch(getAuthUserProfilePending({ userId }))
-    const { userInfo } = await userGateway.getUserInfo({ token })
-    return userInfo
+    const { profileInfo } = await profileGateway.getProfileInfo({ token })
+    return profileInfo
   },
   {
     condition(_, { getState }) {

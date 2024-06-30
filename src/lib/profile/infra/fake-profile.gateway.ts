@@ -1,16 +1,16 @@
 import {
   GetInfoProfileResponse,
-  UserGateway,
-  UserInfos,
-} from '../model/user.gateway'
+  ProfileGateway,
+  ProfileInfos,
+} from '../model/profile.gateway'
 
-export class FakeUserGateway implements UserGateway {
+export class FakeProfileGateway implements ProfileGateway {
   constructor(private readonly delay = 0) {}
-  userInfoByUser = new Map<string, UserInfos>()
+  profileInfoByUser = new Map<string, ProfileInfos>()
 
-  static withUsersInfos(usersInfos: Map<string, UserInfos>) {
-    const userGateway = new FakeUserGateway()
-    userGateway.userInfoByUser = usersInfos
+  static withUsersInfos(usersInfos: Map<string, ProfileInfos>) {
+    const userGateway = new FakeProfileGateway()
+    userGateway.profileInfoByUser = usersInfos
     return userGateway
   }
 
@@ -33,23 +33,23 @@ export class FakeUserGateway implements UserGateway {
     return { firstName, lastName, userId, token }
   }
 
-  async getUserInfo({
+  async getProfileInfo({
     token,
   }: {
     token: string
   }): Promise<GetInfoProfileResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        const userInfo = this.userInfoByUser.get(token)
-        if (!userInfo) {
+        const profileInfo = this.profileInfoByUser.get(token)
+        if (!profileInfo) {
           return reject()
         }
         return resolve({
-          userInfo,
+          profileInfo,
         })
       }, this.delay)
     )
   }
 }
 
-export const userGateway = new FakeUserGateway()
+export const userGateway = new FakeProfileGateway()

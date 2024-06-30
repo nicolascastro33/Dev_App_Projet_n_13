@@ -2,11 +2,12 @@ import {
   AccountGateway,
   AccountInfo,
   GetInfoAccountResponse,
+  GetInfoAllAccountsResponse,
 } from '../model/account.gateway'
 
 export class FakeAccountGateway implements AccountGateway {
   constructor(private readonly delay = 0) {}
-  accountInfoByAccountId = new Map<string, AccountInfo>()
+  allAccounts: undefined | AccountInfo[] = undefined
   async getAccountInfo({
     accountId,
     token,
@@ -17,13 +18,31 @@ export class FakeAccountGateway implements AccountGateway {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
         console.log(token)
-        const accountInfo = this.accountInfoByAccountId.get(accountId)
+        const allAccounts = this.allAccounts
+        const accountInfo = allAccounts?.find(
+          (account) => account.id === accountId
+        )
+
         if (!accountInfo) {
           return reject()
         }
-        return resolve({
-          accountInfo,
-        })
+        return resolve({ accountInfo })
+      }, this.delay)
+    )
+  }
+  getAllAccountsInfo({
+    token,
+  }: {
+    token: string
+  }): Promise<GetInfoAllAccountsResponse> {
+    return new Promise((resolve, reject) =>
+      setTimeout(() => {
+        console.log(token)
+        const allAccounts = this.allAccounts
+        if (!allAccounts) {
+          return reject()
+        }
+        return resolve({ allAccounts })
       }, this.delay)
     )
   }

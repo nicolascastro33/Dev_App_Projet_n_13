@@ -9,19 +9,25 @@ import { Provider } from './Provider'
 import { createRouter } from './router'
 
 import { ApiAuthGateway } from './lib/auth/infra/api-auth.gateway'
-import { ApiUserGateway } from './lib/user/infra/api-user.gateway'
 import { userAuthenticated } from './lib/auth/reducer'
-import { ApiBankAccountGateway } from './lib/account/infra/api-acccount-info.gateway'
-import { getAuthInfoProfileUser } from './lib/user/usecases/get-auth-info-profile-user'
+import { FakeTransactionsGateway } from './lib/transactions/infra/fake-transactions.gateway'
+import { transactionsMockData, accountsMockData } from './Mock/data'
+import { FakeAccountGateway } from './lib/account/infra/fake-account.gateway'
+import { ApiProfileGateway } from './lib/profile/infra/api-profile.gateway'
+import { getAuthInfoProfileUser } from './lib/profile/usecases/get-auth-info-profile-user'
 
 const authGateway = new ApiAuthGateway()
-const userGateway = new ApiUserGateway()
-const accountGateway = new ApiBankAccountGateway()
+const profileGateway = new ApiProfileGateway()
+const accountGateway = new FakeAccountGateway()
+accountGateway.allAccounts = accountsMockData
+const transactionsGateway = new FakeTransactionsGateway()
+transactionsGateway.allTransactions = transactionsMockData
 
 const store = createStore({
   authGateway,
-  userGateway,
+  profileGateway,
   accountGateway,
+  transactionsGateway,
 })
 
 const authUserToken = localStorage.getItem('token')

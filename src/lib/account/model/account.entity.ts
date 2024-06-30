@@ -5,10 +5,6 @@ export type Account = {
     amount: string
     currency: string
     balance: string
-    transactions: {
-      date: string
-      description: string
-    }[]
 }
 
 export const accountAdapter = createEntityAdapter<Account>()

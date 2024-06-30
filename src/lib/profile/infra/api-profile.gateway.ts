@@ -1,8 +1,11 @@
-import { GetInfoProfileResponse, UserGateway } from '../model/user.gateway'
 import { getInfo } from '../../../fetch'
 import { updateInfo } from '../../../fetch'
+import {
+  GetInfoProfileResponse,
+  ProfileGateway,
+} from '../model/profile.gateway'
 
-export class ApiUserGateway implements UserGateway {
+export class ApiProfileGateway implements ProfileGateway {
   async updateInfoProfile({
     token,
     firstName,
@@ -32,16 +35,16 @@ export class ApiUserGateway implements UserGateway {
     return payload
   }
 
-  async getUserInfo({
+  async getProfileInfo({
     token,
   }: {
     token: string
   }): Promise<GetInfoProfileResponse> {
     const info = await getInfo(token)
     return {
-      userInfo: { ...info},
+      profileInfo: { ...info },
     }
   }
 }
 
-export const userGateway = new ApiUserGateway()
+export const profileGateway = new ApiProfileGateway()

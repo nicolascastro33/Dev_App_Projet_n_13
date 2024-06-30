@@ -3,7 +3,7 @@ import {
   getAuthUserProfilePending,
   getAuthInfoProfileUser,
 } from '../usecases/get-auth-info-profile-user'
-import { User, userAdapter } from '../model/user.entity'
+import { Profile, profileAdapter } from '../model/profile.entity'
 import { RootState } from '../../create-store'
 import { mockData } from '../../../Mock/data'
 import {
@@ -11,13 +11,13 @@ import {
   updateInfoProfile,
 } from '../usecases/update-info-profile-user'
 
-export type ProfileSliceState = EntityState<User> & {
+export type ProfileSliceState = EntityState<Profile> & {
   loadingProfileByUser: { [userId: string]: boolean }
 }
 
 export const profileSlice = createSlice({
   name: 'profile',
-  initialState: userAdapter.getInitialState({
+  initialState: profileAdapter.getInitialState({
     loadingProfileByUser: {},
   }) as ProfileSliceState,
   reducers: {},
@@ -37,7 +37,7 @@ export const profileSlice = createSlice({
       })
       .addCase(updateInfoProfile.fulfilled, (state, action) => {
         const user = action.payload
-        userAdapter.updateOne(state, {
+        profileAdapter.updateOne(state, {
           id: user.userId,
           changes: {
             firstName: user.firstName,
@@ -53,7 +53,7 @@ export const profileSlice = createSlice({
         isAnyOf(getAuthInfoProfileUser.fulfilled),
         (state, action) => {
           const user = action.payload
-          userAdapter.addOne(state, {
+          profileAdapter.addOne(state, {
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
@@ -75,17 +75,17 @@ const setUserProfileInfoLoadingState = (
   state.loadingProfileByUser[userId] = loading
 }
 
-export const selectUserInfo = (userId: string, state: RootState) =>
-  userAdapter.getSelectors().selectById(state.user.profile, userId)
+export const selectProfileInfo = (userId: string, state: RootState) =>
+  profileAdapter.getSelectors().selectById(state.profile.info, userId)
 
 export const selectUserFirstName = (userId: string, state: RootState) =>
-  userAdapter.getSelectors().selectById(state.user.profile, userId)?.firstName
+  profileAdapter.getSelectors().selectById(state.profile.info, userId)?.firstName
 
 export const selectIsUserProfileLoading = (userId: string, state: RootState) =>
-  state.user.profile.loadingProfileByUser[userId] ?? false
+  state.profile.info.loadingProfileByUser[userId] ?? false
 
 export const selectProfileForUser = (userId: string, state: RootState) =>
-  userAdapter
+  profileAdapter
     .getSelectors()
-    .selectAll(state.user.profile)
+    .selectAll(state.profile.info)
     .find((t) => t.id === userId)

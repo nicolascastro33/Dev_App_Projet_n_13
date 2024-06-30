@@ -1,10 +1,10 @@
+import { selectAllBankAccount } from '../../lib/account/slices/bank-account-info'
 import { selectAuthUserId } from '../../lib/auth/reducer'
 import { RootState } from '../../lib/create-store'
-import { selectAccounts } from '../../lib/user/slices/bank.accounts.slice'
 import {
   selectIsUserProfileLoading,
   selectProfileForUser,
-} from '../../lib/user/slices/profile.slice'
+} from '../../lib/profile/slices/profile.slice'
 
 export enum ViewModelType {
   NoProfile = 'NO_PROFILE',
@@ -58,6 +58,7 @@ export type ViewModel = {
 export const selectHomeViewModel = (rootState: RootState): ViewModel => {
   const authUser = selectAuthUserId(rootState)
   const profile = selectProfileForUser(authUser, rootState)
+  const accounts = selectAllBankAccount(rootState)
   const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
 
   if (isUserProfileLoading) {
@@ -77,7 +78,7 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
     }
   }
 
-  if (profile.accounts.length === 0) {
+  if (!accounts) {
     return {
       user: {
         type: ViewModelType.EmptyProfile,
@@ -88,21 +89,11 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
     }
   }
 
-  const accountInfo = selectAccounts(profile.accounts, rootState).map(
-    (account) => ({
-      id: account!.id,
-      name: account!.name,
-      balance: account!.balance,
-      amount: account!.amount,
-      currency: account!.currency,
-    })
-  )
-
   if (isUserProfileLoading && profile) {
     return {
       user: {
         type: ViewModelType.UpdateInfoProfile,
-        accountInfo,
+        accountInfo: accounts,
         firstName: profile.firstName,
         lastName: profile.lastName,
       },
@@ -112,7 +103,7 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
   return {
     user: {
       type: ViewModelType.WithAccounts,
-      accountInfo,
+      accountInfo: accounts,
       firstName: profile.firstName,
       lastName: profile.lastName,
     },
