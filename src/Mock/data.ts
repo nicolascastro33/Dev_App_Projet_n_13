@@ -65,7 +65,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -75,7 +75,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -85,7 +85,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -95,7 +95,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -105,7 +105,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -115,7 +115,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -125,7 +125,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -135,7 +135,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
   {
@@ -145,7 +145,7 @@ export const transactionsMockData = [
     description: 'Payment from John Doe',
     amount: '100',
     balance: '1900',
-    category: 'Sport',
+    category: undefined,
     note: undefined,
   },
 ]

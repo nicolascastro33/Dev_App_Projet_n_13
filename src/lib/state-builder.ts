@@ -1,4 +1,4 @@
-import { Profile, profileAdapter } from './user/model/profile.entity'
+import { Profile, profileAdapter } from './profile/model/profile.entity'
 import { RootState } from './create-store'
 import {
   ActionCreatorWithPayload,
@@ -7,6 +7,10 @@ import {
 } from '@reduxjs/toolkit'
 import { rootReducer } from './root-reducer'
 import { Account, accountAdapter } from './account/model/account.entity'
+import {
+  Transaction,
+  transactionsAdapter,
+} from './transactions/model/transactions.entity'
 
 const initialState = rootReducer(undefined, createAction(''))
 
@@ -16,6 +20,7 @@ const withNotLoadingUserOf = createAction<{ userId: string }>(
   'withNotLoadingUserOf'
 )
 const withAccounts = createAction<Account[]>('withAccounts')
+const withTransactions = createAction<Transaction[]>('withTransactions')
 const withAuthUser = createAction<{ authUser: string; userId: string }>(
   'withAuthUser'
 )
@@ -37,6 +42,9 @@ const reducer = createReducer(initialState, (builder) => {
     .addCase(withAccounts, (state, action) => {
       accountAdapter.addMany(state.account.info, action.payload)
     })
+    .addCase(withTransactions, (state, action) => {
+      transactionsAdapter.addMany(state.transactions.info, action.payload)
+    })
 })
 
 export const stateBuilder = (baseState = initialState) => {
@@ -51,6 +59,7 @@ export const stateBuilder = (baseState = initialState) => {
     withLoadingUserOf: reduce(withLoadingUserOf),
     withNotLoadingUserOf: reduce(withNotLoadingUserOf),
     withAccounts: reduce(withAccounts),
+    withTransactions: reduce(withTransactions),
     build(): RootState {
       return baseState
     },

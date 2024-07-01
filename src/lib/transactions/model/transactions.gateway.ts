@@ -5,7 +5,7 @@ export type TransactionsInfo = {
   description: string
   amount: string
   balance: string
-  category: string
+  category: string|undefined
   note: string | undefined
 }
 
