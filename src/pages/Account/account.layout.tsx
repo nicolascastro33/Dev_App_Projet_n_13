@@ -6,6 +6,7 @@ import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
 import { ReactNode } from 'react'
 import { Loading } from '../../components/Loading'
 import { BankAccountInfo } from '../../components/BankAccountInfoAccountPage'
+import { Link } from 'react-router-dom'
 
 function AccountLayout() {
   const viewModel = useSelector<
@@ -16,7 +17,12 @@ function AccountLayout() {
   const bankAccountNode: ReactNode = (() => {
     switch (viewModel.account?.type) {
       case ViewModelType.NoAccount:
-        return <h1>We didn't find this account, try an another moment</h1>
+        return (
+          <div className='account-page-no-accounts'>
+            <h1>We didn't find this account, try an another moment</h1>
+            <Link to='/home'><h2>Go back to your home page</h2></Link>
+          </div>
+        )
       case ViewModelType.LoadingAccount:
         return <Loading />
       case ViewModelType.NoTransactions:
@@ -33,21 +39,21 @@ function AccountLayout() {
           </>
         )
       case ViewModelType.WithTransactions:
+        const info = viewModel.account.accountInfo
+        const currency = info.currency
         return (
           <>
             <BankAccountInfo
-              name={viewModel.account.accountInfo.name}
-              currency={viewModel.account.accountInfo.currency}
-              amount={viewModel.account.accountInfo.amount}
-              balance={viewModel.account.accountInfo.balance}
+              name={info.name}
+              currency={currency}
+              amount={info.amount}
+              balance={info.balance}
             />
             <section className="all-transactions-wrapper">
               {viewModel.account.transactions.map((transaction, index) => (
                 <Transaction
                   transaction={transaction}
-                  amount={viewModel.account.accountInfo.amount}
-                  currency={viewModel.account.accountInfo.currency}
-                  index={index}
+                  currency={currency}
                   key={index}
                 />
               ))}

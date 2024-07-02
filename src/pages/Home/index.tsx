@@ -50,6 +50,7 @@ function Home() {
           </>
         )
       case ViewModelType.UpdateInfoProfile:
+        console.log('update')
         return (
           <>
             <WelcomeProfile

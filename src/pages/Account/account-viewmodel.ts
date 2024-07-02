@@ -43,8 +43,14 @@ export type ViewModel = {
           balance: string
         }
         transactions: {
+          id: string
+          accountId: string
           date: string
           description: string
+          amount: string
+          balance: string
+          category: string|undefined
+          note: string | undefined
         }[]
       }
 }
@@ -58,19 +64,19 @@ export const selectAccountViewModel = (rootState: RootState): ViewModel => {
     rootState
   )
 
+  if (!account) {
+    return {
+      account: {
+        type: ViewModelType.NoAccount,
+      },
+    }
+  }
+
   if (IsBankAccountInfoLoading) {
     return {
       account: {
         type: ViewModelType.LoadingAccount,
         accountInfo: 'Loading...',
-      },
-    }
-  }
-
-  if (!account) {
-    return {
-      account: {
-        type: ViewModelType.NoAccount,
       },
     }
   }

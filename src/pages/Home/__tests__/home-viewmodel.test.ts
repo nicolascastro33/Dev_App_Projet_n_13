@@ -10,7 +10,8 @@ import { FakeAuthGateway } from '../../../lib/auth/infra/fake-auth.gateway'
 import { FakeProfileGateway } from '../../../lib/profile/infra/fake-profile.gateway'
 import { authenticateWithApi } from '../../../lib/auth/usecases/authenticate-with-api.usecase'
 import { getAuthInfoProfileUser } from '../../../lib/profile/usecases/get-auth-info-profile-user'
-import { mockData } from '../../../Mock/data'
+import { getAuthAllBankAccountInfo } from '../../../lib/account/usecases/get-auth-all-bank-account-info'
+import { FakeAccountGateway } from '../../../lib/account/infra/fake-account.gateway'
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
   authUser: 'Tony',
@@ -31,14 +32,12 @@ describe('Profile view model', () => {
     const initialState = stateBuilderWithTonyAuthenticated
       .withUser({
         id: 'tony-user-id',
-        accounts: [],
         firstName: 'tony',
         lastName: 'stark',
       })
       .build()
     const store = createTestStore({}, initialState)
     const ViewModel = selectHomeViewModel(store.getState())
-
     expect(ViewModel).toEqual({
       user: {
         type: ViewModelType.EmptyProfile,
@@ -69,7 +68,6 @@ describe('Profile view model', () => {
         id: 'tony-user-id',
         firstName: 'tony',
         lastName: 'stark',
-        accounts: ['act-1'],
       })
       .withAccounts([
         {
@@ -108,7 +106,6 @@ describe('Profile view model', () => {
         id: 'tony-user-id',
         firstName: 'tony',
         lastName: 'stark',
-        accounts: ['act-1', 'act-2'],
       })
       .withAccounts([
         {
@@ -156,6 +153,22 @@ describe('Profile view model', () => {
 
   test('Should have user profile infos when user log in', async () => {
     const token = '1234'
+    const accounts = [
+      {
+        id: 'act-1',
+        name: 'act-1',
+        balance: 'current',
+        amount: '000',
+        currency: 'euro',
+      },
+      {
+        id: 'act-2',
+        name: 'act-2',
+        balance: 'current',
+        amount: '100',
+        currency: 'dollar',
+      },
+    ]
     const profileGateway = new FakeProfileGateway()
     profileGateway.profileInfoByUser.set('1234', {
       id: '1',
@@ -167,9 +180,13 @@ describe('Profile view model', () => {
     authGateway.token = token
     authGateway.userId = '1'
 
+    const accountGateway = new FakeAccountGateway()
+    accountGateway.allAccounts = accounts
+
     const store = createTestStore({
       profileGateway,
       authGateway,
+      accountGateway,
     })
 
     await store.dispatch(
@@ -180,13 +197,15 @@ describe('Profile view model', () => {
       })
     )
     await store.dispatch(getAuthInfoProfileUser())
+    await store.dispatch(getAuthAllBankAccountInfo())
     const viewModel = selectHomeViewModel(store.getState())
+
     expect(viewModel).toEqual<ViewModel>({
       user: {
         type: ViewModelType.WithAccounts,
         firstName: 'Tony',
         lastName: 'Stark',
-        accountInfo: mockData.accounts,
+        accountInfo: accounts,
       },
     })
   })

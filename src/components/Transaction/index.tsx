@@ -19,13 +19,9 @@ type TransactionProps = {
 export const Transaction = ({
   transaction,
   currency,
-  amount,
-  index,
 }: {
   transaction: TransactionProps
   currency: string
-  amount: string
-  index: number
 }) => {
   const dispatch = useDispatch<AppDispatch>()
   const [isOpen, setIsOpen] = useState(false)
@@ -102,11 +98,11 @@ export const Transaction = ({
         <p className="transaction-description">{transaction.description}</p>
         <p className="transaction-amount">
           {currency}
-          {5}
+          {transaction.amount}
         </p>
         <p className="transaction-balance">
           {currency}
-          {index === 0 ? amount : Number(amount.replace(',', '')) - 5 * index}
+          {transaction.balance}
         </p>
       </div>
       {isOpen && (

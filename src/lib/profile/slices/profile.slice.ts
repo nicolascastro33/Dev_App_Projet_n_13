@@ -5,7 +5,6 @@ import {
 } from '../usecases/get-auth-info-profile-user'
 import { Profile, profileAdapter } from '../model/profile.entity'
 import { RootState } from '../../create-store'
-import { mockData } from '../../../Mock/data'
 import {
   getAuthUserProfilePendingDuringUpdate,
   updateInfoProfile,
@@ -57,7 +56,6 @@ export const profileSlice = createSlice({
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            accounts: mockData.accounts.map((m) => m.id),
           })
           setUserProfileInfoLoadingState(state, {
             userId: user.id,
@@ -79,7 +77,8 @@ export const selectProfileInfo = (userId: string, state: RootState) =>
   profileAdapter.getSelectors().selectById(state.profile.info, userId)
 
 export const selectUserFirstName = (userId: string, state: RootState) =>
-  profileAdapter.getSelectors().selectById(state.profile.info, userId)?.firstName
+  profileAdapter.getSelectors().selectById(state.profile.info, userId)
+    ?.firstName
 
 export const selectIsUserProfileLoading = (userId: string, state: RootState) =>
   state.profile.info.loadingProfileByUser[userId] ?? false

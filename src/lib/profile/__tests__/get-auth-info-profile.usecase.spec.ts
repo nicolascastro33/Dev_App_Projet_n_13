@@ -4,8 +4,18 @@ import { FakeProfileGateway } from '../infra/fake-profile.gateway'
 import { FakeAuthGateway } from '../../auth/infra/fake-auth.gateway'
 import { AppStore, createTestStore } from '../../create-store'
 import { selectIsUserProfileLoading } from '../slices/profile.slice'
-import { mockData } from '../../../Mock/data'
 import { stateBuilder } from '../../state-builder'
+
+export const mockData = {
+  id: 'tony-user-id',
+  user: 'Tony',
+  profileInfo: {
+    firstName: 'Tony',
+    lastName: 'Stark',
+    email: 'tonystark@gmail.com',
+    password: '123',
+  },
+}
 
 describe("Feature: Retrieving authenticated user's profile info", () => {
   it('Example: Tony is authenticated and can see see his profile info', async () => {
@@ -15,7 +25,6 @@ describe("Feature: Retrieving authenticated user's profile info", () => {
       id: mockData.id,
       firstName: mockData.profileInfo.firstName,
       lastName: mockData.profileInfo.lastName,
-      accounts: mockData.accounts,
     })
     // act (when)
     const userProfileInfoRetrieving =
@@ -47,13 +56,6 @@ function givenExistingUserInfo(userInfo: {
   id: string
   firstName: string
   lastName: string
-  accounts: {
-    id: string
-    name: string
-    amount: string
-    currency: string
-    balance: string
-  }[]
 }) {
   profileGateway.profileInfoByUser.set('Tony', userInfo)
 }
@@ -69,9 +71,9 @@ async function whenRetrievingAuthenticatedUserProfileInfo() {
   await store.dispatch(getAuthInfoProfileUser())
 }
 
-function thenTheProfileOfTheUserShouldBeLoading(user: string) {
+function thenTheProfileOfTheUserShouldBeLoading(userId: string) {
   const isUserProfileLoading = selectIsUserProfileLoading(
-    user,
+    userId,
     store.getState()
   )
   expect(isUserProfileLoading).toBe(true)
@@ -86,13 +88,6 @@ function thenTheReceivedProfileShouldBe(expectedProfileInfo: {
     email: string
     password: string
   }
-  accounts: {
-    id: string
-    name: string
-    amount: string
-    currency: string
-    balance: string
-  }[]
 }) {
   const expectedState = stateBuilder()
     .withAuthUser({
@@ -101,11 +96,9 @@ function thenTheReceivedProfileShouldBe(expectedProfileInfo: {
     })
     .withUser({
       id: expectedProfileInfo.id,
-      accounts: expectedProfileInfo.accounts.map((m) => m.id),
       firstName: expectedProfileInfo.profileInfo.firstName,
       lastName: expectedProfileInfo.profileInfo.lastName,
     })
-    .withAccounts(expectedProfileInfo.accounts)
     .withNotLoadingUserOf({ userId: expectedProfileInfo.id })
     .build()
   expect(store.getState()).toEqual(expectedState)

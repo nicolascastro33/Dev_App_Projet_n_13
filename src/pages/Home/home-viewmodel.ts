@@ -60,7 +60,17 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
   const profile = selectProfileForUser(authUser, rootState)
   const accounts = selectAllBankAccount(rootState)
   const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
-
+  
+  if (isUserProfileLoading && profile) {
+    return {
+      user: {
+        type: ViewModelType.UpdateInfoProfile,
+        accountInfo: accounts,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+      },
+    }
+  }
   if (isUserProfileLoading) {
     return {
       user: {
@@ -78,22 +88,11 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
     }
   }
 
-  if (!accounts) {
+  if (!accounts || accounts.length === 0) {
     return {
       user: {
         type: ViewModelType.EmptyProfile,
         accountInfo: 'There is no account yet ',
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-      },
-    }
-  }
-
-  if (isUserProfileLoading && profile) {
-    return {
-      user: {
-        type: ViewModelType.UpdateInfoProfile,
-        accountInfo: accounts,
         firstName: profile.firstName,
         lastName: profile.lastName,
       },
