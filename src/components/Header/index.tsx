@@ -1,21 +1,17 @@
 import { MouseEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import {
-  selectAuthUserId,
-  selectIsUserAuthenticated,
-} from '../../lib/auth/reducer'
+import { selectIsUserAuthenticated } from '../../lib/auth/reducer'
 import { HeaderViewAuthenticated, HeaderViewNotAuthenticated } from './view'
 import { useDispatch } from 'react-redux'
 import { AppDispatch, RootState } from '../../lib/create-store'
-import { authenticatedUserLogOut } from '../../lib/auth/usecases/authenticatedUserLogOut'
+import { authenticatedUserLogOut } from '../../lib/common/usecases/authenticatedUserLogOut'
 import { selectUserFirstName } from '../../lib/profile/slices/profile.slice'
 
 function Header() {
   const isUserAuthenticated = useSelector(selectIsUserAuthenticated)
-  const userId = useSelector(selectAuthUserId)
   const firstName = useSelector<RootState>((rootState) =>
-    selectUserFirstName(userId, rootState)
+    selectUserFirstName(rootState)
   )
 
   const navigate = useNavigate()
@@ -25,12 +21,15 @@ function Header() {
   function signOut(e: MouseEvent<HTMLAnchorElement>): void {
     e.preventDefault()
     dispatch(authenticatedUserLogOut())
+
     if (location !== '/') {
       navigate('/login')
     }
   }
   if (isUserAuthenticated && firstName) {
-    return <HeaderViewAuthenticated signOut={signOut} firstName={`${firstName}`} />
+    return (
+      <HeaderViewAuthenticated signOut={signOut} firstName={`${firstName}`} />
+    )
   }
   return <HeaderViewNotAuthenticated />
 }

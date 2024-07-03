@@ -25,7 +25,7 @@ export class FakeAuthGateway implements AuthGateway {
     console.log(email, password)
     return new Promise((resolve) =>
       setTimeout(
-        () => resolve({ token: this.token, userId:this.userId }),
+        () => resolve({ token: this.token }),
         this.delay
       )
     )

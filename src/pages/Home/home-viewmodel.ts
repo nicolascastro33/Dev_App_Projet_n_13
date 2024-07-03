@@ -1,9 +1,9 @@
 import { selectAllBankAccount } from '../../lib/account/slices/bank-account-info'
-import { selectAuthUserId } from '../../lib/auth/reducer'
 import { RootState } from '../../lib/create-store'
 import {
   selectIsUserProfileLoading,
-  selectProfileForUser,
+  selectUserFirstName,
+  selectUserLastName,
 } from '../../lib/profile/slices/profile.slice'
 
 export enum ViewModelType {
@@ -56,21 +56,43 @@ export type ViewModel = {
 }
 
 export const selectHomeViewModel = (rootState: RootState): ViewModel => {
-  const authUser = selectAuthUserId(rootState)
-  const profile = selectProfileForUser(authUser, rootState)
+  const firstName = selectUserFirstName(rootState)
+  const lastName = selectUserLastName(rootState)
   const accounts = selectAllBankAccount(rootState)
-  const isUserProfileLoading = selectIsUserProfileLoading(authUser, rootState)
-  
-  if (isUserProfileLoading && profile) {
+  const isUserProfileLoading = selectIsUserProfileLoading(rootState)
+
+  if (firstName && lastName) {
+    if (isUserProfileLoading) {
+      return {
+        user: {
+          type: ViewModelType.UpdateInfoProfile,
+          accountInfo: accounts,
+          firstName,
+          lastName,
+        },
+      }
+    }
+    if (!accounts || accounts.length === 0) {
+      return {
+        user: {
+          type: ViewModelType.EmptyProfile,
+          accountInfo: 'There is no account yet ',
+          firstName,
+          lastName,
+        },
+      }
+    }
+
     return {
       user: {
-        type: ViewModelType.UpdateInfoProfile,
+        type: ViewModelType.WithAccounts,
         accountInfo: accounts,
-        firstName: profile.firstName,
-        lastName: profile.lastName,
+        firstName,
+        lastName,
       },
     }
   }
+
   if (isUserProfileLoading) {
     return {
       user: {
@@ -80,31 +102,9 @@ export const selectHomeViewModel = (rootState: RootState): ViewModel => {
     }
   }
 
-  if (!profile) {
-    return {
-      user: {
-        type: ViewModelType.NoProfile,
-      },
-    }
-  }
-
-  if (!accounts || accounts.length === 0) {
-    return {
-      user: {
-        type: ViewModelType.EmptyProfile,
-        accountInfo: 'There is no account yet ',
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-      },
-    }
-  }
-
   return {
     user: {
-      type: ViewModelType.WithAccounts,
-      accountInfo: accounts,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      type: ViewModelType.NoProfile,
     },
   }
 }

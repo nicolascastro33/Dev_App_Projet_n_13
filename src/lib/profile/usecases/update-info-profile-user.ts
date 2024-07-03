@@ -1,10 +1,6 @@
-import { createAction } from '@reduxjs/toolkit'
-import { selectAuthUserId, selectAuthUserToken } from '../../auth/reducer'
+import { selectAuthUserToken } from '../../auth/reducer'
 import { createAppAsyncThunk } from '../../create-app-thunk'
-
-export const getAuthUserProfilePendingDuringUpdate = createAction<{ userId: string }>(
-  'user/getAuthUserProfilePendingDuringUpdate'
-)
+import { getAuthUserProfilePending } from './get-auth-info-profile-user'
 
 export const updateInfoProfile = createAppAsyncThunk(
   'user/updateInfoProfile',
@@ -16,11 +12,9 @@ export const updateInfoProfile = createAppAsyncThunk(
     { extra: { profileGateway }, getState, dispatch }
   ) => {
     const token = selectAuthUserToken(getState())
-    const userId = selectAuthUserId(getState())
-    dispatch(getAuthUserProfilePendingDuringUpdate({ userId }))
+    dispatch(getAuthUserProfilePending())
     const authUser = await profileGateway.updateInfoProfile({
       token,
-      userId,
       firstName: params.firstName,
       lastName: params.lastName,
     })

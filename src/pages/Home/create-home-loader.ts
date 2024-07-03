@@ -6,9 +6,11 @@ import { getAuthAllBankAccountInfo } from '../../lib/account/usecases/get-auth-a
 export const createHomeLoader =
   ({ store }: { store: AppStore }): LoaderFunction =>
   async () => {
-    if (!store.getState().profile.info.ids.length) {
+    if (!store.getState().profile.info.entities) {
       await store.dispatch(getAuthInfoProfileUser())
     }
+
     await store.dispatch(getAuthAllBankAccountInfo())
+
     return null
   }

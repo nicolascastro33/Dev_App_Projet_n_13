@@ -8,6 +8,7 @@ import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
 import WelcomeProfile from '../../components/WelcomeProfile'
 import { updateInfoProfile } from '../../lib/profile/usecases/update-info-profile-user'
 import { Loading } from '../../components/Loading'
+import { Link } from 'react-router-dom'
 
 function Home() {
   const [editingName, setEditingName] = useState(false)
@@ -21,7 +22,14 @@ function Home() {
   const profileNode: ReactNode = (() => {
     switch (viewModel.user?.type) {
       case ViewModelType.NoProfile:
-        return null
+        return (
+          <div className="home-page-no-profile">
+            <h1>We can't reach your account</h1>
+            <Link to="/login">
+              <h2>Try to log in again</h2>
+            </Link>
+          </div>
+        )
       case ViewModelType.LoadingAccount:
         return <Loading />
       case ViewModelType.EmptyProfile:
@@ -50,7 +58,6 @@ function Home() {
           </>
         )
       case ViewModelType.UpdateInfoProfile:
-        console.log('update')
         return (
           <>
             <WelcomeProfile

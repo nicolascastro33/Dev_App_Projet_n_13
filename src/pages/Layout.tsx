@@ -10,6 +10,7 @@ function LayoutComponent() {
   const isUserAuthenticated = useSelector(selectIsUserAuthenticated)
   const navigate = useNavigate()
   const location = useLocation().pathname
+
   useEffect(() => {
     if (!isUserAuthenticated) {
       if (location !== '/login' && location !== '/') {

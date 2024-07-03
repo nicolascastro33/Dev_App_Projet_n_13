@@ -346,6 +346,22 @@ body {
   }
 }
 
+.home-page-no-profile{
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  & h2{
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover{
+      text-decoration: none;
+    }
+  }
+}
+
 .account-page-main {
   position: relative;
   background-color: rgb(223, 223, 224);

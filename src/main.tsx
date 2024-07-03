@@ -31,11 +31,10 @@ const store = createStore({
 })
 
 const authUserToken = localStorage.getItem('token')
-const userId = localStorage.getItem('userId')
 
-if (authUserToken && userId) {
+if (authUserToken) {
   authGateway.token = authUserToken
-  store.dispatch(userAuthenticated({ authUserToken, userId }))
+  store.dispatch(userAuthenticated({ authUserToken }))
   store.dispatch(getAuthInfoProfileUser())
 }
 

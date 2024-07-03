@@ -14,16 +14,12 @@ export interface ProfileGateway {
     token,
     firstName,
     lastName,
-    userId,
   }: {
     token: string
     firstName: string
     lastName: string
-    userId: string
   }): Promise<{
     firstName: string
     lastName: string
-    token: string
-    userId: string
   }>
 }

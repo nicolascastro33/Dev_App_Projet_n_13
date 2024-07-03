@@ -17,7 +17,6 @@ export class FakeAccountGateway implements AccountGateway {
   }): Promise<GetInfoAccountResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        console.log(token)
         const allAccounts = this.allAccounts
         const accountInfo = allAccounts?.find(
           (account) => account.id === accountId
@@ -37,7 +36,6 @@ export class FakeAccountGateway implements AccountGateway {
   }): Promise<GetInfoAllAccountsResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        console.log(token)
         const allAccounts = this.allAccounts
         if (!allAccounts) {
           return reject()

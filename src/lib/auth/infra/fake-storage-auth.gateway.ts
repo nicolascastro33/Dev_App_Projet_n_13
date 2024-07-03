@@ -16,14 +16,14 @@ export class FakeStorageAuthGateway implements AuthGateway {
     email: string
     password: string
   }): Promise<AuthApiPromiseGateway | undefined> {
-    const { token, userId } = await this.fakeAuthGateway.authenticateWithApi({
+    const { token } = await this.fakeAuthGateway.authenticateWithApi({
       email,
       password,
     })
-    if (token && userId) {
+    if (token) {
       localStorage.setItem('fake-auth', token)
       this.fakeAuthGateway.onAuthStateChangedListener(token)
-      return { token, userId }
+      return { token }
     }
   }
 

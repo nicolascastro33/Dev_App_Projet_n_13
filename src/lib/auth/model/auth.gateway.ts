@@ -15,6 +15,5 @@ export interface AuthGateway {
 }
 
 export type AuthApiPromiseGateway = {
-  token?: string
-  userId?: string
+  token: string
 }

@@ -6,6 +6,7 @@ import {
   getAuthAllTransactionsInfoPending,
 } from '../usecases/get-auth-transactions-info-with-id'
 import { updateTransactionInfo } from '../usecases/update-auth-transactions-infos-with-id'
+import { authenticatedUserLogOut } from '../../common/usecases/authenticatedUserLogOut'
 
 export type TransactionSliceState = EntityState<Transaction> & {
   loadingAllTransactionsByAccountId: { [accountId: string]: boolean }
@@ -62,6 +63,9 @@ export const transactionSlice = createSlice({
             },
           })
         }
+      })
+      .addCase(authenticatedUserLogOut.fulfilled, (state) => {
+        transactionsAdapter.removeAll(state)
       })
   },
 })

@@ -9,6 +9,7 @@ import {
   getAuthAllBankAccountInfo,
   getAuthAllBankAccountInfoPending,
 } from '../usecases/get-auth-all-bank-account-info'
+import { authenticatedUserLogOut } from '../../common/usecases/authenticatedUserLogOut'
 
 export type AccountSliceState = EntityState<Account> & {
   loadingAccountById: { [accountId: string]: boolean }
@@ -54,6 +55,9 @@ export const accountSlice = createSlice({
         setAllBankAccountInfoLoadingState(state, {
           loading: false,
         })
+      })
+      .addCase(authenticatedUserLogOut.fulfilled, (state) => {
+        accountAdapter.removeAll(state)
       })
   },
 })

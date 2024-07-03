@@ -3,62 +3,52 @@ import {
   getAuthUserProfilePending,
   getAuthInfoProfileUser,
 } from '../usecases/get-auth-info-profile-user'
-import { Profile, profileAdapter } from '../model/profile.entity'
+import { Profile } from '../model/profile.entity'
 import { RootState } from '../../create-store'
-import {
-  getAuthUserProfilePendingDuringUpdate,
-  updateInfoProfile,
-} from '../usecases/update-info-profile-user'
+import { updateInfoProfile } from '../usecases/update-info-profile-user'
+import { authenticatedUserLogOut } from '../../common/usecases/authenticatedUserLogOut'
 
 export type ProfileSliceState = EntityState<Profile> & {
-  loadingProfileByUser: { [userId: string]: boolean }
+  firstName: undefined | string
+  lastName: undefined | string
+  loadingProfileByUser: boolean
 }
 
 export const profileSlice = createSlice({
   name: 'profile',
-  initialState: profileAdapter.getInitialState({
+  initialState: {
+    firstName: undefined,
+    lastName: undefined,
     loadingProfileByUser: {},
-  }) as ProfileSliceState,
+  } as ProfileSliceState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getAuthUserProfilePending, (state, action) => {
+      .addCase(getAuthUserProfilePending, (state) => {
         setUserProfileInfoLoadingState(state, {
-          userId: action.payload.userId,
-          loading: true,
-        })
-      })
-      .addCase(getAuthUserProfilePendingDuringUpdate, (state, action) => {
-        setUserProfileInfoLoadingState(state, {
-          userId: action.payload?.userId,
           loading: true,
         })
       })
       .addCase(updateInfoProfile.fulfilled, (state, action) => {
-        const user = action.payload
-        profileAdapter.updateOne(state, {
-          id: user.userId,
-          changes: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-        })
+        state.firstName = action.payload.firstName
+        state.lastName = action.payload.lastName
         setUserProfileInfoLoadingState(state, {
-          userId: user.userId,
           loading: false,
         })
+      })
+      .addCase(authenticatedUserLogOut.fulfilled, (state) => {
+        state.firstName = undefined
+        state.lastName = undefined
+        state.loadingProfileByUser = false
       })
       .addMatcher(
         isAnyOf(getAuthInfoProfileUser.fulfilled),
         (state, action) => {
-          const user = action.payload
-          profileAdapter.addOne(state, {
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          })
+          if (action.payload) {
+            state.firstName = action.payload.firstName
+            state.lastName = action.payload.lastName
+          }
           setUserProfileInfoLoadingState(state, {
-            userId: user.id,
             loading: false,
           })
         }
@@ -68,23 +58,18 @@ export const profileSlice = createSlice({
 
 const setUserProfileInfoLoadingState = (
   state: ProfileSliceState,
-  { userId, loading }: { userId: string; loading: boolean }
+  { loading }: { loading: boolean }
 ) => {
-  state.loadingProfileByUser[userId] = loading
+  state.loadingProfileByUser = loading
 }
 
-export const selectProfileInfo = (userId: string, state: RootState) =>
-  profileAdapter.getSelectors().selectById(state.profile.info, userId)
+export const selectProfileInfo = (state: RootState) =>
+  state.profile.info ?? undefined
 
-export const selectUserFirstName = (userId: string, state: RootState) =>
-  profileAdapter.getSelectors().selectById(state.profile.info, userId)
-    ?.firstName
+export const selectUserFirstName = (state: RootState) =>
+  state.profile.info.firstName
+export const selectUserLastName = (state: RootState) =>
+  state.profile.info.lastName
 
-export const selectIsUserProfileLoading = (userId: string, state: RootState) =>
-  state.profile.info.loadingProfileByUser[userId] ?? false
-
-export const selectProfileForUser = (userId: string, state: RootState) =>
-  profileAdapter
-    .getSelectors()
-    .selectAll(state.profile.info)
-    .find((t) => t.id === userId)
+export const selectIsUserProfileLoading = (state: RootState) =>
+  state.profile.info.loadingProfileByUser ?? false

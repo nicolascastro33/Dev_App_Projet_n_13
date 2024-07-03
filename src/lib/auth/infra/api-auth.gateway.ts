@@ -23,27 +23,17 @@ export class ApiAuthGateway implements AuthGateway {
     rememberMe: boolean
   }): Promise<AuthApiPromiseGateway | undefined> {
     const token = await getToken({ email, password })
-    if (token) {
-      const userId = await getInfo(token).then((i) => i.id)
-      if (rememberMe) {
-        localStorage.setItem('token', token)
-        localStorage.setItem('userId', userId)
-      } else {
-        localStorage.setItem('token', token)
-        localStorage.setItem('userId', userId)
-      }
-      this.onAuthStateChangedListener(token)
-      return { token, userId }
-    }
+    if (!token) return
+    localStorage.setItem('token', token)
+
+    this.onAuthStateChangedListener(token)
+
+    return { token }
   }
 
   authenticatedUserLogOut(): void {
     localStorage.clear()
     this.onAuthStateChangedListener(undefined)
-  }
-
-  simulateAuthStateChanged(authUser: string) {
-    this.onAuthStateChangedListener(authUser)
   }
 }
 

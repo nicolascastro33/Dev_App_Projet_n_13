@@ -18,19 +18,16 @@ export class FakeProfileGateway implements ProfileGateway {
     token,
     firstName,
     lastName,
-    userId,
   }: {
     token: string
     firstName: string
     lastName: string
-    userId: string
   }): Promise<{
     firstName: string
     lastName: string
     token: string
-    userId: string
   }> {
-    return { firstName, lastName, userId, token }
+    return { firstName, lastName, token }
   }
 
   async getProfileInfo({

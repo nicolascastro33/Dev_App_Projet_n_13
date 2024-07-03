@@ -9,8 +9,8 @@ export const getAuthAllBankAccountInfoPending = createAction<{}>(
 export const getAuthAllBankAccountInfo = createAppAsyncThunk(
   'account/getAuthAllBankAccountInfo',
   async (_, { extra: { accountGateway }, dispatch, getState }) => {
-    const token = selectAuthUserToken(getState())
     dispatch(getAuthAllBankAccountInfoPending({}))
+    const token = selectAuthUserToken(getState())
     const { allAccounts } = await accountGateway.getAllAccountsInfo({
       token,
     })
