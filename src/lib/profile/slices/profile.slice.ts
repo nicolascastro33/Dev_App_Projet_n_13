@@ -19,7 +19,7 @@ export const profileSlice = createSlice({
   initialState: {
     firstName: undefined,
     lastName: undefined,
-    loadingProfileByUser: {},
+    loadingProfileByUser: false,
   } as ProfileSliceState,
   reducers: {},
   extraReducers(builder) {

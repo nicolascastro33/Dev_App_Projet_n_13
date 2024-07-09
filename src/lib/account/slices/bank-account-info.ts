@@ -20,6 +20,7 @@ export const accountSlice = createSlice({
   name: 'account',
   initialState: accountAdapter.getInitialState({
     loadingAccountById: {},
+    loadingAllAccounts: false,
   }) as AccountSliceState,
   reducers: {},
   extraReducers(builder) {
@@ -62,14 +63,14 @@ export const accountSlice = createSlice({
   },
 })
 
-const setBankAccountInfoLoadingState = (
+export const setBankAccountInfoLoadingState = (
   state: AccountSliceState,
   { accountId, loading }: { accountId: string; loading: boolean }
 ) => {
   state.loadingAccountById[accountId] = loading
 }
 
-const setAllBankAccountInfoLoadingState = (
+export const setAllBankAccountInfoLoadingState = (
   state: AccountSliceState,
   { loading }: { loading: boolean }
 ) => {
@@ -83,6 +84,9 @@ export const selectIsBankAccountInfoLoading = (
   accountId: string,
   state: RootState
 ) => state.account.info.loadingAccountById[accountId] ?? false
+
+export const selectAreAllBankAccountsInfoLoading = (state: RootState) =>
+  state.account.info.loadingAllAccounts ?? false
 
 export const selectAllBankAccount = (state: RootState) =>
   accountAdapter.getSelectors().selectAll(state.account.info) ?? undefined

@@ -20,7 +20,7 @@ export const mockData = {
 describe("Feature: Retrieving authenticated user's profile info", () => {
   it('Example: Tony is authenticated and can see see his profile info', async () => {
     // arrange (given)
-    givenAuthenticatedUserIs({ token: mockData.user, userId: mockData.id })
+    givenAuthenticatedUserIs({ token: mockData.user })
     givenExistingUserInfo({
       id: mockData.id,
       firstName: mockData.profileInfo.firstName,
@@ -30,7 +30,7 @@ describe("Feature: Retrieving authenticated user's profile info", () => {
     const userProfileInfoRetrieving =
       whenRetrievingAuthenticatedUserProfileInfo()
     // assert (then)
-    thenTheProfileOfTheUserShouldBeLoading(mockData.id)
+    thenTheProfileOfTheUserShouldBeLoading()
     await userProfileInfoRetrieving
     thenTheReceivedProfileShouldBe(mockData)
   })
@@ -42,14 +42,8 @@ const profileGateway = new FakeProfileGateway()
 let testStateBuilder = stateBuilder()
 let store: AppStore
 
-function givenAuthenticatedUserIs({
-  token,
-  userId,
-}: {
-  token: string
-  userId: string
-}) {
-  testStateBuilder = testStateBuilder.withAuthUser({ authUser: token, userId })
+function givenAuthenticatedUserIs({ token }: { token: string }) {
+  testStateBuilder = testStateBuilder.withAuthUser({ authUser: token })
 }
 
 function givenExistingUserInfo(userInfo: {
@@ -71,11 +65,8 @@ async function whenRetrievingAuthenticatedUserProfileInfo() {
   await store.dispatch(getAuthInfoProfileUser())
 }
 
-function thenTheProfileOfTheUserShouldBeLoading(userId: string) {
-  const isUserProfileLoading = selectIsUserProfileLoading(
-    userId,
-    store.getState()
-  )
+function thenTheProfileOfTheUserShouldBeLoading() {
+  const isUserProfileLoading = selectIsUserProfileLoading(store.getState())
   expect(isUserProfileLoading).toBe(true)
 }
 
@@ -92,7 +83,6 @@ function thenTheReceivedProfileShouldBe(expectedProfileInfo: {
   const expectedState = stateBuilder()
     .withAuthUser({
       authUser: expectedProfileInfo.user,
-      userId: expectedProfileInfo.id,
     })
     .withUser({
       id: expectedProfileInfo.id,

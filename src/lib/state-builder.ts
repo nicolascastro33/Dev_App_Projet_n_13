@@ -1,4 +1,4 @@
-import { Profile, profileAdapter } from './profile/model/profile.entity'
+import { Profile } from './profile/model/profile.entity'
 import { RootState } from './create-store'
 import {
   ActionCreatorWithPayload,
@@ -15,35 +15,47 @@ import {
 const initialState = rootReducer(undefined, createAction(''))
 
 const withUser = createAction<Profile>('withUser')
-const withLoadingUserOf = createAction<{ userId: string }>('withLoadingUserOf')
-const withNotLoadingUserOf = createAction<{ userId: string }>(
-  'withNotLoadingUserOf'
-)
+const withLoadingUserOf = createAction<{}>('withLoadingUserOf')
+const withNotLoadingUserOf = createAction<{}>('withNotLoadingUserOf')
 const withAccounts = createAction<Account[]>('withAccounts')
+const withOneAccount = createAction<Account>('withOneAccount')
+const withLoadingAccountOf = createAction<{accountId:string}>('withLoadingAccountOf')
+const withNotLoadingAccountOf = createAction<{accountId:string}>('withNotLoadingAccountOf')
 const withTransactions = createAction<Transaction[]>('withTransactions')
-const withAuthUser = createAction<{ authUser: string; userId: string }>(
-  'withAuthUser'
-)
+const withNotLoadingTransactionsOf = createAction<{accountId:string}>('withNotLoadingTransactionsOf')
+const withAuthUser = createAction<{ authUser: string }>('withAuthUser')
 const reducer = createReducer(initialState, (builder) => {
   builder
     .addCase(withAuthUser, (state, action) => {
       state.auth.authUserToken = action.payload.authUser
-      state.auth.userId = action.payload.userId
     })
     .addCase(withUser, (state, action) => {
-      profileAdapter.addOne(state.profile.info, action.payload)
+      state.profile.info.firstName = action.payload.firstName
+      state.profile.info.lastName = action.payload.lastName
     })
-    .addCase(withLoadingUserOf, (state, action) => {
-      state.profile.info.loadingProfileByUser[action.payload.userId] = true
+    .addCase(withLoadingUserOf, (state) => {
+      state.profile.info.loadingProfileByUser = true
     })
-    .addCase(withNotLoadingUserOf, (state, action) => {
-      state.profile.info.loadingProfileByUser[action.payload.userId] = false
+    .addCase(withNotLoadingUserOf, (state) => {
+      state.profile.info.loadingProfileByUser = false
     })
     .addCase(withAccounts, (state, action) => {
       accountAdapter.addMany(state.account.info, action.payload)
     })
+    .addCase(withOneAccount, (state, action) => {
+      accountAdapter.addOne(state.account.info, action.payload)
+    })
+    .addCase(withLoadingAccountOf, (state, action) => {
+      state.account.info.loadingAccountById[action.payload.accountId] = true
+    })
+    .addCase(withNotLoadingAccountOf, (state, action) => {
+      state.account.info.loadingAccountById[action.payload.accountId] = false
+    })
     .addCase(withTransactions, (state, action) => {
       transactionsAdapter.addMany(state.transactions.info, action.payload)
+    })
+    .addCase(withNotLoadingTransactionsOf, (state, action) => {
+      state.transactions.info.loadingAllTransactionsByAccountId[action.payload.accountId] = false
     })
 })
 
@@ -59,7 +71,11 @@ export const stateBuilder = (baseState = initialState) => {
     withLoadingUserOf: reduce(withLoadingUserOf),
     withNotLoadingUserOf: reduce(withNotLoadingUserOf),
     withAccounts: reduce(withAccounts),
+    withOneAccount: reduce(withOneAccount),
+    withLoadingAccountOf: reduce(withLoadingAccountOf),
+    withNotLoadingAccountOf: reduce(withNotLoadingAccountOf),
     withTransactions: reduce(withTransactions),
+    withNotLoadingTransactionsOf: reduce(withNotLoadingTransactionsOf),
     build(): RootState {
       return baseState
     },

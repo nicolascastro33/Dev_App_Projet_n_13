@@ -7,6 +7,10 @@ interface HeaderViewProps {
   signOut(e: MouseEvent<HTMLAnchorElement>): void
 }
 
+interface HeaderProblemViewProps {
+  signOut(e: MouseEvent<HTMLAnchorElement>): void
+}
+
 export const HeaderViewNotAuthenticated = () => {
   return (
     <nav className="main-nav">
@@ -48,6 +52,30 @@ export const HeaderViewAuthenticated = ({
           <i className="fa fa-user-circle" />
           {firstName}
         </Link>
+        <a onClick={signOut} className="main-nav-item" href="./index.html">
+          <i className="fa fa-sign-out" />
+          Sign Out
+        </a>
+      </div>
+    </nav>
+  )
+}
+
+export const HeaderViewAuthenticatedButWithAProblem = ({
+  signOut
+}: HeaderProblemViewProps) => {
+  return (
+    <nav className="main-nav">
+      <Link className="main-nav-logo" to="/">
+        <img
+          className="main-nav-logo-image"
+          src={Logo}
+          alt="Argent Bank Logo"
+        />
+        <h1 className="sr-only">Argent Bank</h1>
+      </Link>
+
+      <div>
         <a onClick={signOut} className="main-nav-item" href="./index.html">
           <i className="fa fa-sign-out" />
           Sign Out

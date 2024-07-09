@@ -1,4 +1,4 @@
-import { getInfo, getToken } from '../../../fetch'
+import { getToken } from '../../../fetch'
 import {
   AuthApiPromiseGateway,
   AuthGateway,

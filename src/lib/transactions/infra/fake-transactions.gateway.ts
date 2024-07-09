@@ -10,7 +10,7 @@ export class FakeTransactionsGateway implements TransactionsGateway {
   async getTransactionsInfo({
     accountId,
     token,
-  }: {
+  }: { 
     accountId: string
     token: string
   }): Promise<GetInfoTransactionsResponse> {

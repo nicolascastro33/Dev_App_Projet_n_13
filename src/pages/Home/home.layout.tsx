@@ -8,11 +8,22 @@ import { exhaustiveGuard } from '../../lib/common/exhaustive-guards'
 import WelcomeProfile from '../../components/WelcomeProfile'
 import { updateInfoProfile } from '../../lib/profile/usecases/update-info-profile-user'
 import { Loading } from '../../components/Loading'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { authenticatedUserLogOut } from '../../lib/common/usecases/authenticatedUserLogOut'
 
 function Home() {
   const [editingName, setEditingName] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
+
+  function signOut(e: any): void {
+    e.preventDefault()
+    dispatch(authenticatedUserLogOut())
+      .unwrap()
+      .finally(() => {
+        navigate('/login')
+      })
+  }
 
   const viewModel = useSelector<
     RootState,
@@ -25,9 +36,7 @@ function Home() {
         return (
           <div className="home-page-no-profile">
             <h1>We can't reach your account</h1>
-            <Link to="/login">
-              <h2>Try to log in again</h2>
-            </Link>
+            <h2 onClick={signOut}>Try to log in again</h2>
           </div>
         )
       case ViewModelType.LoadingAccount:

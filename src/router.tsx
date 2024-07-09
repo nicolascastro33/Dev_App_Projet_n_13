@@ -3,7 +3,7 @@ import { createHomeLoader } from './pages/Home/create-home-loader'
 import { AppStore } from './lib/create-store'
 import Welcome from './pages/Welcome'
 import LayoutComponent from './pages/Layout'
-import Home from './pages/Home'
+import Home from './pages/Home/home.layout'
 import Login from './pages/Login'
 import { createAccountLoader } from './pages/Account/create-account-loader'
 import AccountLayout from './pages/Account/account.layout'
@@ -15,7 +15,7 @@ export const createRouter = ({ store }: { store: AppStore }) =>
       element: <LayoutComponent />,
       children: [
         {
-          element: <Login />,
+          element: <Welcome />,
           path: '*',
         },
         {

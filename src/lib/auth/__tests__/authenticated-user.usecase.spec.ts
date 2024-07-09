@@ -8,12 +8,10 @@ describe('Feature: Authenticated with Api', () => {
   test('Example: Tony authenticates with Api successfully', async () => {
     givenAuthenticationWithApiWillSucceedForUser({
       token: 'token',
-      userId: 'test-id',
     })
     await whenUserAuthenticateWithApi()
     thenUserShouldBeAuthenticated({
       token: 'token',
-      userId: 'test-id',
     })
   })
 })
@@ -25,13 +23,10 @@ const store = createTestStore({
 
 function givenAuthenticationWithApiWillSucceedForUser({
   token,
-  userId,
 }: {
   token: string
-  userId: string
 }) {
   authGateway.token = token
-  authGateway.userId = userId
 }
 
 async function whenUserAuthenticateWithApi() {
@@ -44,15 +39,7 @@ async function whenUserAuthenticateWithApi() {
   )
 }
 
-function thenUserShouldBeAuthenticated({
-  token,
-  userId,
-}: {
-  token: string
-  userId: string
-}) {
-  const expectedState = stateBuilder()
-    .withAuthUser({ authUser: token, userId })
-    .build()
+function thenUserShouldBeAuthenticated({ token }: { token: string }) {
+  const expectedState = stateBuilder().withAuthUser({ authUser: token }).build()
   expect(store.getState()).toEqual(expectedState)
 }

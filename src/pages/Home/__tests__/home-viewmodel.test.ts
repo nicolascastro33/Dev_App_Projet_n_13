@@ -15,7 +15,6 @@ import { FakeAccountGateway } from '../../../lib/account/infra/fake-account.gate
 
 const stateBuilderWithTonyAuthenticated = stateBuilder().withAuthUser({
   authUser: 'Tony',
-  userId: 'tony-user-id',
 })
 
 describe('Profile view model', () => {
@@ -33,7 +32,7 @@ describe('Profile view model', () => {
       .withUser({
         id: 'tony-user-id',
         firstName: 'tony',
-        lastName: 'stark',
+        lastName: 'stark', 
       })
       .build()
     const store = createTestStore({}, initialState)
@@ -50,7 +49,7 @@ describe('Profile view model', () => {
 
   test('Example: the user account is loading ', () => {
     const initialState = stateBuilderWithTonyAuthenticated
-      .withLoadingUserOf({ userId: 'tony-user-id' })
+      .withLoadingUserOf({})
       .build()
     const store = createTestStore({}, initialState)
     const ViewModel = selectHomeViewModel(store.getState())

@@ -35,7 +35,8 @@ export class ApiProfileGateway implements ProfileGateway {
     token: string
   }): Promise<GetInfoProfileResponse> {
     const info = await getInfo(token)
-    if(!info)localStorage.clear()
+    console.log(info)
+    if (!info) localStorage.clear()
     return {
       profileInfo: { ...info },
     }
