@@ -33,6 +33,7 @@ function Home() {
   const profileNode: ReactNode = (() => {
     switch (viewModel.user?.type) {
       case ViewModelType.NoProfile:
+        document.title = 'Argent Bank - No Profile'
         return (
           <div className="home-page-no-profile">
             <h1>We can't reach your account</h1>
@@ -42,6 +43,7 @@ function Home() {
       case ViewModelType.LoadingAccount:
         return <Loading />
       case ViewModelType.EmptyProfile:
+        document.title = `Argent Bank - Welcome ${viewModel.user.firstName} ${viewModel.user.lastName}`
         return (
           <>
             <WelcomeProfile
@@ -54,6 +56,7 @@ function Home() {
           </>
         )
       case ViewModelType.WithAccounts:
+        document.title = `Argent Bank - Welcome ${viewModel.user.firstName} ${viewModel.user.lastName}`
         return (
           <>
             <WelcomeProfile
@@ -67,6 +70,7 @@ function Home() {
           </>
         )
       case ViewModelType.UpdateInfoProfile:
+        document.title = `Argent Bank - Welcome ${viewModel.user.firstName} ${viewModel.user.lastName}`
         return (
           <>
             <WelcomeProfile

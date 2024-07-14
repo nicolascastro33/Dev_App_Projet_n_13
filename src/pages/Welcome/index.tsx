@@ -8,10 +8,12 @@ function Welcome() {
   const navigate = useNavigate()
   const location = useLocation()
   useEffect(() => {
+    document.title = 'Argent Bank - Home page'
     if (location.pathname !== '/') {
       navigate('/')
     }
-  })
+  }, [])
+  
   return (
     <main>
       <div className="hero">

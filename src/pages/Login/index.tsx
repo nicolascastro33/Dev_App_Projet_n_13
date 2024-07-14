@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LoginView from './view'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../lib/create-store'
@@ -8,6 +8,10 @@ function Login() {
   const [wrongPasswordOrEmail, setWrongPasswordOrEmail] = useState(false)
   const [authenticating, setAuthenticating] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    document.title = 'Argent Bank - Login'
+  },[])
 
   const authWithApi = (e: any): void => {
     e.preventDefault()

@@ -16,7 +16,6 @@ export class FakeTransactionsGateway implements TransactionsGateway {
   }): Promise<GetInfoTransactionsResponse> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        console.log(token)
         const allTransactions = this.allTransactions
         const transactionsInfo = allTransactions?.filter(
           (t) => t.accountId === accountId
@@ -47,7 +46,6 @@ export class FakeTransactionsGateway implements TransactionsGateway {
   }> {
     return new Promise((resolve, reject) =>
       setTimeout(() => {
-        console.log(token)
         if (!newInfo) {
           return reject()
         }

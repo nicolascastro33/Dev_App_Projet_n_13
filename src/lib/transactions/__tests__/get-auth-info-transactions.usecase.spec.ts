@@ -115,6 +115,5 @@ function thenTheReceivedAccountsShouldBe(
     })
     .build()
   console.log(store.getState().transactions)
-  console.log(expectedState.transactions)
   expect(store.getState()).toEqual(expectedState)
 }
